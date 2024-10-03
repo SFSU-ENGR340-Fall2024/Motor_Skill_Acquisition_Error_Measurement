@@ -1,0 +1,7 @@
+from tkinter import *
+
+folder = Tk()
+
+folder.geometry("1000x500")
+
+folder.mainloop()
