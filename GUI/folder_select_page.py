@@ -1,24 +1,23 @@
 import sys
 from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QVBoxLayout
 
-class Home(QWidget):
+class FolderSelect(QWidget):
     def __init__(self):
         super().__init__()
         self.UI()
 
     def UI(self):
-        # initialize start button
-        start_button = QPushButton('Start New Test')
-        start_button.setStyleSheet("font-size: 20px")
+        # initialize buttons
+        select_folder_button = QPushButton('Select Folder')
+        select_folder_button.setStyleSheet('font-size: 20px')
 
-        # initialize review button
-        review_button = QPushButton('Review Previous Test')
-        review_button.setStyleSheet("font-size: 20px")
+        back_button = QPushButton('Back')
+        back_button.setStyleSheet('font-size: 20px')
 
         # arrange buttons
         vbox = QVBoxLayout()
-        vbox.addWidget(start_button)
-        vbox.addWidget(review_button)
+        vbox.addWidget(select_folder_button)
+        vbox.addWidget(back_button)
 
         # create window
         self.setLayout(vbox)
@@ -28,7 +27,7 @@ class Home(QWidget):
 
 def run():
     app = QApplication(sys.argv)
-    ex = Home()
+    ex = FolderSelect()
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
