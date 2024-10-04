@@ -1,31 +1,34 @@
-from tkinter import *
+import sys
+from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QVBoxLayout
 
-class gui:
-    def start_menu():
-        pass
+class FolderSelect(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.UI()
 
-    def review():
-        pass
+    def UI(self):
+        # initialize buttons
+        select_folder_button = QPushButton('Select Folder')
+        select_folder_button.setStyleSheet('font-size: 20px')
 
+        back_button = QPushButton('Back')
+        back_button.setStyleSheet('font-size: 20px')
 
-    home = Tk()
-    home.option_add('*Font', '20')
-    home.geometry("500x500")
+        # arrange buttons
+        vbox = QVBoxLayout()
+        vbox.addWidget(select_folder_button)
+        vbox.addWidget(back_button)
 
-    frame = Frame(home)
-    frame.pack()
+        # create window
+        self.setLayout(vbox)
+        self.setGeometry(300, 300, 500, 500)
+        self.setWindowTitle('Error Measurement Tool')
+        self.show()
 
-    left_frame = Frame(home)
-    left_frame.pack(side = TOP)
+def run():
+    app = QApplication(sys.argv)
+    ex = FolderSelect()
+    sys.exit(app.exec_())
 
-    right_frame = Frame(home)
-    right_frame.pack(side = BOTTOM)
-
-    start_button = Button(left_frame, text = "Start New Test", command = start_menu)
-    start_button.pack(padx = 10, pady =10)
-
-    review_button = Button(right_frame, text = "Review Data")
-    review_button.pack(padx = 10, pady = 10)
-
-    home.title("Error Measurement Tool")
-    home.mainloop()
+if __name__ == '__main__':
+    run()
