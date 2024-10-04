@@ -6,18 +6,27 @@ class FolderSelect(QWidget):
         super().__init__()
         self.UI()
 
+    def PickFolder(self):
+        pass
+
+    def ExitProgram(self):
+        sys.exit()
+
     def UI(self):
-        # initialize buttons
+        # initialize 'select folder' button
         select_folder_button = QPushButton('Select Folder')
+        select_folder_button.clicked.connect(self.PickFolder)
         select_folder_button.setStyleSheet('font-size: 20px')
 
-        back_button = QPushButton('Back')
-        back_button.setStyleSheet('font-size: 20px')
+        # initialize 'exit' button
+        exit_button = QPushButton('Exit')
+        exit_button.clicked.connect(self.ExitProgram)
+        exit_button.setStyleSheet('font-size: 20px')
 
         # arrange buttons
         vbox = QVBoxLayout()
         vbox.addWidget(select_folder_button)
-        vbox.addWidget(back_button)
+        vbox.addWidget(exit_button)
 
         # create window
         self.setLayout(vbox)

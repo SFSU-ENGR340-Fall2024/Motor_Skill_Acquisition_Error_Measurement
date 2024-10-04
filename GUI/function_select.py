@@ -5,9 +5,6 @@ class Home(QWidget):
     def __init__(self):
         super().__init__()
         self.UI()
-    
-    def ExitProgram(self):
-        sys.exit()
 
     def UI(self):
         # initialize start button
@@ -19,15 +16,14 @@ class Home(QWidget):
         review_button.setStyleSheet("font-size: 20px")
         
         # initialize exit button
-        exit_button = QPushButton('Exit')
-        exit_button.clicked.connect(self.ExitProgram)
-        exit_button.setStyleSheet("font-size: 20px")
+        back_button = QPushButton('Back')
+        back_button.setStyleSheet("font-size: 20px")
 
         # arrange buttons
         vbox = QVBoxLayout()
         vbox.addWidget(start_button)
         vbox.addWidget(review_button)
-        vbox.addWidget(exit_button)
+        vbox.addWidget(back_button)
 
         # create window
         self.setLayout(vbox)
