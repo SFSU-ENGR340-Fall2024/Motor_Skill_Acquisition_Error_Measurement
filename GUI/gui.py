@@ -15,7 +15,7 @@ class GUI(QWidget):
     def EndProgram(self):
         sys.exit()
 
-    # Main 
+    # UI design
     def UI(self):
         # Initialize Start Button
         start = QPushButton('Start Test')
@@ -37,6 +37,7 @@ class GUI(QWidget):
         combine.addItems(['Select Folder', 'Start Test', 'Review Data'])
         combine.setStyleSheet('font-size: 20px')
 
+        # Arrange buttons to vertical layout
         vbox = QVBoxLayout()
         # vbox.addWidget(combine)
         vbox.addWidget(start)
