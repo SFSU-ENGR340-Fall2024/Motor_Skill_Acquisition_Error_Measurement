@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QVBoxLayout
+from PyQt5.QtWidgets import QWidget, QPushButton, QApplication, QVBoxLayout, QFileDialog
 
 class FolderSelect(QWidget):
     def __init__(self):
@@ -7,7 +7,7 @@ class FolderSelect(QWidget):
         self.UI()
 
     def PickFolder(self):
-        pass
+        folder_path  = QFileDialog.getExistingDirectory(self, 'Select Folder')
 
     def ExitProgram(self):
         sys.exit()
