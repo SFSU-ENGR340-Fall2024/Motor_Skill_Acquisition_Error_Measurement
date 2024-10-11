@@ -49,6 +49,7 @@ class GUI(QWidget):
         self.setWindowTitle('Error Measurement Tool')
         self.show()
     
+# function to run the GUI class
 def run():
     app = QApplication(sys.argv)
     ex = GUI()
