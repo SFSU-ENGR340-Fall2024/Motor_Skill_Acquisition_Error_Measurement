@@ -6,6 +6,9 @@ class Home(QWidget):
         super().__init__()
         self.UI()
 
+    def GoBack(self):
+        pass
+
     def UI(self):
         # initialize start button
         start_button = QPushButton('Start New Test')
@@ -17,6 +20,7 @@ class Home(QWidget):
         
         # initialize exit button
         back_button = QPushButton('Back')
+        back_button.clicked.connect(self.GoBack)
         back_button.setStyleSheet("font-size: 20px")
 
         # arrange buttons

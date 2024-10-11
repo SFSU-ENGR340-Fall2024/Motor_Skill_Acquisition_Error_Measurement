@@ -7,7 +7,7 @@ class FolderSelect(QWidget):
         self.UI()
 
     def PickFolder(self):
-        QFileDialog.getExistingDirectory(self, 'Select Folder')
+        pass
 
     def ExitProgram(self):
         sys.exit()
