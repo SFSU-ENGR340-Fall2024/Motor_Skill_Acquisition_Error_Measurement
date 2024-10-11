@@ -9,7 +9,7 @@ class GUI(QWidget):
 
     # Method to enable buttons to initiate select folder
     def SelectFolder(self):
-        QFileDialog.getExistingDirectory(self, 'Select Folder')
+        return QFileDialog.getExistingDirectory(self, 'Select Folder')
 
     # Method to enable 'Exit' button to end program
     def EndProgram(self):
