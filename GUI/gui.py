@@ -8,6 +8,7 @@ class GUI(QWidget):
         self.folder = ""
         self.last_button = ""
         self.UI()
+        last_button = 0
     
     def get_folder(self):
         return self.folder
@@ -88,10 +89,11 @@ class GUI(QWidget):
 
     
 # function to run the GUI class
-# def run():
-#     app = QApplication(sys.argv) # create application object
-#     ex = GUI() # create GUI object
-#     sys.exit(app.exec_()) # execute app
+def Start():
+     app = QApplication(sys.argv) # create application object
+     ex = GUI() # create GUI object
+     sys.exit(app.exec_()) # execute app
+     return ex
 
 if __name__ == '__main__':
     app = QApplication(sys.argv) # create application object

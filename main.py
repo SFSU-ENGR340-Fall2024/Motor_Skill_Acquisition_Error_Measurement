@@ -8,6 +8,8 @@ from PyQt5.QtWidgets import QApplication
 #class imports
 from Image_Data import Image_Data
 from GUI.gui import GUI
+from GUI.gui import Start
+#from ImageProcces.ImageprocessClass import Imageproccess
 
 #Main
 if __name__ == '__main__':
@@ -28,14 +30,31 @@ if __name__ == '__main__':
     #start
     print('start')
 
+    #init error calc, file handler
+    #ip = Imageproccess()
+
     #Display Home GUI
+    g = Start()
+    
     #IF image processing
-        #User selects a folder
+    if g.last_button == 'Image Processing':
+        #get the selected folder
+        folder = g.get_folder()
         #Display image display GUI
+
+        #error check
+        if g.last_button != 'Reject Folder' and g.last_button != 'Accept Folder':
+            print('Error with folder selection')
         #IF user rejects folder
+        if g.last_button == 'Reject Folder':
+            pass
             #Allow user to select new folder
+                
         #IF user accepts folder
+        if g.last_button == "Accept Folder":
+            pass
             #IF results fodler is found
+
                 #tell the user, do something else?
             #Display image processing GUI
             #User selects calibration image
@@ -52,9 +71,9 @@ if __name__ == '__main__':
                 #Allow user to moce clicks
             #User confirms info is correct
             #Display next image, repeat process until done
-
-
-            
-
+    
     #IF show results
+    if g.last_button == 'Results':
+        #get the selected folder
+        folder = g.get_folder()
         #User selects a folder

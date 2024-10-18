@@ -2,11 +2,7 @@ import cv2
 
 ImageDisplayWidth = 800
 ImageDisplayHeight = 600
-<<<<<<< HEAD
-#image_path = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\calimage.JPG'
-=======
 image_path = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\calimage.JPG'
->>>>>>> 933a85e861c6b64673cfc027154ccc04a5738e32
 
 # Class to process images
 class ImageProcess:
@@ -27,7 +23,7 @@ class ImageProcess:
     # Method to draw a circle on the image
     def drawcircle(self, x, y):
         cv2.circle(self.imageresized, (x, y), 3, (255, 0, 0), 1)
-        cv2.imshow('Measurement Collection', self.imageresized)
+        cv2.imshow('Test Image', self.imageresized)
 
     # Method to draw a line between two points on the image
     def drawline(self, point1, point2):
@@ -37,11 +33,11 @@ class ImageProcess:
 
     # Method to collect calibration points from the user
     def measurementcollect(self):
-        cv2.namedWindow('Measurement Collection')  # Create the window
-        cv2.setMouseCallback('Measurement Collection', self.checkclicks)
+        cv2.namedWindow('Test Image')  # Create the window
+        cv2.setMouseCallback('Test Image', self.checkclicks)
 
         while True:
-            cv2.imshow('Measurement Collection', self.imageresized)
+            cv2.imshow('Test Image', self.imageresized)
             # Exit the loop if two points have been selected
             if len(self.points) >= 2:
                 print("Calibration complete with points:", self.points)
@@ -63,35 +59,55 @@ class ImageProcess:
         self.imageresized = self.original_image.copy()  # Reset to the original image
         print("Image and points reset.")
 
+    # Method to display a text in the middle of the image with a gray background
+    def displaytextmiddle(self, text):
+        # Set font and size for the text
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_scale = 1
+        font_color = (255, 255, 255)  # White text
+        thickness = 2
+        text_size, _ = cv2.getTextSize(text, font, font_scale, thickness)
+
+        # Calculate the position for the text (centered)
+        text_x = (self.imageresized.shape[1] - text_size[0]) // 2
+        text_y = (self.imageresized.shape[0] + text_size[1]) // 2
+
+        # Draw a gray background rectangle behind the text
+        background_color = (128, 128, 128)  # Gray background
+        rectangle_top_left = (text_x - 10, text_y - text_size[1] - 10)  # Some padding
+        rectangle_bottom_right = (text_x + text_size[0] + 10, text_y + 10)
+        cv2.rectangle(self.imageresized, rectangle_top_left, rectangle_bottom_right, background_color, cv2.FILLED)
+
+        # Put the text on the image
+        cv2.putText(self.imageresized, text, (text_x, text_y), font, font_scale, font_color, thickness, cv2.LINE_AA)
+
+        # Show the updated image with the text in the middle
+        cv2.imshow('Test Image', self.imageresized)
+
+
 # Load an image
 image = cv2.imread(image_path)
 
-if image is not None:  # Ensure the image loaded successfully
-    # Create an instance of the ImageProcess class
-    img_process = ImageProcess(image, ImageDisplayWidth, ImageDisplayHeight)
-    
-    # Collect points for calibration
-    img_process.measurementcollect()
 
-    # Add a short wait to ensure the window is properly closed
-    cv2.waitKey(1)  # Wait briefly before resetting the image
-    # reset the image
-    img_process.reset()
+img_process = ImageProcess(image, ImageDisplayWidth, ImageDisplayHeight)
 
-    # Redraw the points on the image
-    if len(img_process.points) >= 2:  # Ensure there are at least two points
-        for point in img_process.points:
-            img_process.drawcircle(point[0], point[1])
-    
-        # Draw a line between the two points
-        img_process.drawline(img_process.points[0], img_process.points[1])
+# Collect points for calibration
+img_process.measurementcollect()
 
-        # Display the image
-        cv2.imshow('Test Image', img_process.imageresized)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
-    else:
-        print("Not enough points selected for drawing lines.")
+# Reset the image to its original state
+img_process.reset()
+cv2.waitKey(1)  # Optional, but ensures smoothness in some environments
+# Reopen the 'Measurement Collection' window with the reset image
 
-else:
-    print("Error: Image could not be loaded. Please check the file path.")
+for point in img_process.points:
+    img_process.drawcircle(point[0], point[1])
+
+# Draw a line between the two points
+img_process.drawline(img_process.points[0], img_process.points[1])
+
+# Display the image
+cv2.imshow('Test Image', img_process.imageresized)
+
+# 
+
+cv2.waitKey(10000)  # Wait 9s before proceeding
