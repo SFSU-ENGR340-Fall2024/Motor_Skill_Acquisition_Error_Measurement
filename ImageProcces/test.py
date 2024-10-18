@@ -1,4 +1,11 @@
 import cv2
+from tkinter import simpledialog, messagebox
+import tkinter as tk
+import numpy as np
+
+# Initialize Tkinter root (needed for simpledialog)
+root = tk.Tk()
+root.withdraw()  # Hide the main window
 
 ImageDisplayWidth = 800
 ImageDisplayHeight = 600
@@ -11,6 +18,7 @@ class ImageProcess:
         self.imageresized = cv2.resize(self.image, (width, height))
         self.original_image = self.imageresized.copy()  # Store a copy of the original image
         self.points = []  # List to store clicked points
+        self.measurement = None  # Initialize as None for the calibration value
 
     # Method to check where the left mouse button is clicked
     def checkclicks(self, event, x, y, flags, param):
@@ -28,7 +36,6 @@ class ImageProcess:
     # Method to draw a line between two points on the image
     def drawline(self, point1, point2):
         cv2.line(self.imageresized, point1, point2, (0, 255, 0), 1)
-        # Show the updated image in the 'Test Image' window
         cv2.imshow('Test Image', self.imageresized)
 
     # Method to collect calibration points from the user
@@ -47,21 +54,16 @@ class ImageProcess:
                 print("Calibration canceled.")
                 break
 
-        # Short delay to ensure proper window closure
         cv2.waitKey(1)  
         cv2.destroyAllWindows()  # Close the window
 
     # Method to reset the image 
-    # This method removes all drawn points, text, and lines from the image
-    # input: None
-    # output: None
     def reset(self):
         self.imageresized = self.original_image.copy()  # Reset to the original image
         print("Image and points reset.")
 
-    # Method to display a text in the middle of the image with a gray background
+    # Method to display text in the middle of the image with a gray background
     def displaytextmiddle(self, text):
-        # Set font and size for the text
         font = cv2.FONT_HERSHEY_SIMPLEX
         font_scale = 1
         font_color = (255, 255, 255)  # White text
@@ -84,30 +86,56 @@ class ImageProcess:
         # Show the updated image with the text in the middle
         cv2.imshow('Test Image', self.imageresized)
 
+    def calibration(self): 
+        # Reset the image to its original state
+        self.reset()
+        cv2.waitKey(1)  # Optional, but ensures smoothness in some environments
+
+        # Reopen the 'Measurement Collection' window with the reset image
+        for point in self.points:
+            self.drawcircle(point[0], point[1])
+
+        # Draw a line between the two points
+        self.drawline(self.points[0], self.points[1])
+
+        # Prompt the user for the calibration measurement
+        real_world_distance = simpledialog.askstring("Input", "Enter your value in meters:")
+        
+        # Convert the input to a float, handling possible errors
+        try:
+            real_world_distance = float(real_world_distance)
+        except (ValueError, TypeError):
+            messagebox.showerror("Input Error", "Invalid input. Please enter a numeric value.")
+            real_world_distance = 0  # Default to 0 if input is invalid
+
+        # Calculate the pixel distance between the two points
+        pixel_distance = np.sqrt((self.points[1][0] - self.points[0][0]) ** 2 + (self.points[1][1] - self.points[0][1]) ** 2)
+
+        # Calculate the scaling factor (real-world distance per pixel)
+        scaling_factor = real_world_distance / pixel_distance if pixel_distance > 0 else 0
+
+        # Prepare the text to display
+        scaling_text = f"Scaling factor: {scaling_factor:.2f} meters/pixel"
+
+        # Reset the image and draw points and lines again
+        self.reset()
+        cv2.waitKey(1)  # Optional, but ensures smoothness in some environments
+        for point in self.points:
+            self.drawcircle(point[0], point[1])
+        self.drawline(self.points[0], self.points[1])
+
+        # Display the result texts
+        self.displaytextmiddle(f"Each Pixel is {scaling_text}")
+
+        cv2.waitKey(10000)  # Wait 10 seconds before proceeding
+        cv2.destroyAllWindows()  # Close the window
+        
+
 
 # Load an image
 image = cv2.imread(image_path)
-
-
 img_process = ImageProcess(image, ImageDisplayWidth, ImageDisplayHeight)
-
 # Collect points for calibration
 img_process.measurementcollect()
-
-# Reset the image to its original state
-img_process.reset()
-cv2.waitKey(1)  # Optional, but ensures smoothness in some environments
-# Reopen the 'Measurement Collection' window with the reset image
-
-for point in img_process.points:
-    img_process.drawcircle(point[0], point[1])
-
-# Draw a line between the two points
-img_process.drawline(img_process.points[0], img_process.points[1])
-
-# Display the image
-cv2.imshow('Test Image', img_process.imageresized)
-
-# 
-
-cv2.waitKey(10000)  # Wait 9s before proceeding
+# Calibrate the system
+img_process.calibration()

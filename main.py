@@ -7,7 +7,7 @@ import os
 from PyQt5.QtWidgets import QApplication
 
 #class imports
-from Image_Data import Image_Data
+# from Image_Data import Image_Data
 from GUI.gui import GUI
 from GUI.gui import Start
 #from ImageProcces.ImageprocessClass import Imageproccess
@@ -110,3 +110,6 @@ if __name__ == '__main__':
         #get the selected folder
         folder = g.get_folder()
         #User selects a folder
+
+    sys.exit(app.exec_())
+    print(g.get_folder())
