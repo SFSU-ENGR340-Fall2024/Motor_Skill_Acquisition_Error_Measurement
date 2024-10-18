@@ -6,7 +6,7 @@ import sys
 from PyQt5.QtWidgets import QApplication
 
 #class imports
-from Image_Data import Image_Data
+# from Image_Data import Image_Data
 from GUI.gui import GUI
 from GUI.gui import Start
 #from ImageProcces.ImageprocessClass import Imageproccess
@@ -34,8 +34,14 @@ if __name__ == '__main__':
     #ip = Imageproccess()
 
     #Display Home GUI
-    g = Start()
+    app = QApplication(sys.argv)
+    g = GUI()
+    folder = g.get_folder()
+    button = g.last_button
     
+    if button == 'Select Folder':
+        print(folder)
+
     #IF image processing
     if g.last_button == 'Image Processing':
         #get the selected folder
@@ -77,3 +83,6 @@ if __name__ == '__main__':
         #get the selected folder
         folder = g.get_folder()
         #User selects a folder
+
+    sys.exit(app.exec_())
+    print(g.get_folder())
