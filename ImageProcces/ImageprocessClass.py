@@ -2,7 +2,11 @@ import cv2
 
 ImageDisplayWidth = 800
 ImageDisplayHeight = 600
+<<<<<<< HEAD
+#image_path = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\calimage.JPG'
+=======
 image_path = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\calimage.JPG'
+>>>>>>> 933a85e861c6b64673cfc027154ccc04a5738e32
 
 # Class to process images
 class ImageProcess:
