@@ -5,7 +5,8 @@ from PyQt5.QtWidgets import (QWidget, QPushButton, QApplication, QComboBox,
 class GUI(QWidget):
     def __init__(self):
         super().__init__()
-        self.folder = 0
+        self.folder = ""
+        self.last_button = ""
         self.UI()
         last_button = 0
     
@@ -14,20 +15,24 @@ class GUI(QWidget):
     
     def set_folder(self):
         self.folder = QFileDialog.getExistingDirectory(self, 'Select Folder')
-        self.pages.setCurrentIndex(1)
+        self.last_button = "Select Folder"
+        return self.pages.setCurrentIndex(1), self.folder, self.last_button
     
     def back_button(self):
         self.pages.setCurrentIndex(0)
+        self.button = "Back"
+        return self.button
         
     def ExitButton(self):
         sys.exit()
 
     # UI design
     def UI(self):
+        # Create page stack
         self.pages = QStackedWidget(self)
         self.home_page = self.Home()
         self.page_2 = self.Page2()
-
+        
         self.pages.addWidget(self.home_page)
         self.pages.addWidget(self.page_2)
 
@@ -41,6 +46,12 @@ class GUI(QWidget):
 
     def Home(self):
         page = QWidget()
+
+        # Initialize Select Folder Button
+        select = QPushButton('Select Folder')
+        select.clicked.connect(self.set_folder)
+        select.setStyleSheet('font-size; 20px')
+
         # Initialize Start Button
         start = QPushButton('Start Test')
         start.clicked.connect(self.set_folder)
