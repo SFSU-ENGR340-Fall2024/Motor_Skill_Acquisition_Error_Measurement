@@ -1,11 +1,6 @@
 
 import cv2
 
-ImageDisplayWidth = 800
-ImageDisplayHeight = 600
-image_path = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\RulerPicture.jpg'
-nextimage = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\IMG_1687.JPG'
-
 
 class DataClass:
     def __init__(self, image, width=1500, height=700):
@@ -33,3 +28,5 @@ class DataClass:
         self.diff_y = None
         # This store the next image path
         self.nextimage = nextimage
+
+data_instance = DataClass(image_path)
