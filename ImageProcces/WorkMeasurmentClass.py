@@ -24,16 +24,22 @@ class ImageProcess:
         self.original_image = self.imageresized.copy() 
         # This store calibration points 
         self.points = [] 
+        # This store the scaling factor for calibration
+        self.scaling_factor = None
         # This stores the distance between two points for calibration, default value is 100 cm or 1m
         self.measurement = 100
-        # This store the points for the center of the gride
+        # This store the points for the center of the gride position
         self.center = [] 
-        self.puck = [] # Points for the puck
+        # This store the points for the puck position
+        self.puck = [] 
+        # This store the error measurement calculated value from the center to the puck
         self.error_measurement_value = None  
+        # This store the difference in x and y coordinates between the center and the puck
         self.diff_x = None
         self.diff_y = None
-        self.scaling_factor = None
+        # This store the next image path
         self.nextimage = nextimage
+
     
     # Update image to next image 
     def updateImage(self, width=1000, height=900):
@@ -47,6 +53,8 @@ class ImageProcess:
             self.drawcircle(x, y)
             self.points.append((x, y))  # Store the coordinates
             print("Points:", self.points)
+        elif event == cv2.EVENT_RBUTTONDOWN: 
+            return
 
     # Method to draw a circle on the image
     def drawcircle(self, x, y):
