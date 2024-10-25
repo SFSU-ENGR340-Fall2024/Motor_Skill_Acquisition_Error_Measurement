@@ -13,11 +13,13 @@ class FileManager:
      
     # Our Folder location as our attribute
     # Get the directory of the current file (Python file must be in folder with images)
-    current_directory = os.path.dirname(os.path.abspath(__file__))
-    print("Current directory:", current_directory)
+
+    def _init_(self):
+        self.current_directory = os.path.dirname(os.path.abspath(__file__))
+        print("Current directory:", self.current_directory)
     
-    #File attribute 
-    filepath = 
+        #File attribute 
+        self.file =  
 
 
 
@@ -30,6 +32,11 @@ class FileManager:
     def CreateFolder(self):
         if not os.path.exists("path/to/demo_folder"): 
               os.makedirs("path/to/demo_folder")
+
+    #Open Folder
+    #Open selected folder in the selected directory 
+    def OpenFolder(self):
+        os.startfile(self.current_directory)  
 
     #Deletes folder 
         #Get directory 
@@ -62,6 +69,7 @@ class FileManager:
             file.write("X coordinates: " + "\n")       
             file.write("Y coordinates: ")
 
+
     #Load file 
         #Get Folder directory 
         #Get File name 
@@ -73,6 +81,7 @@ class FileManager:
     
         with open(file_path, 'r') as file:
                 content = file.read()  # Read the entire file
+
 
     #Copy Files
         #Get Folder directory 
@@ -92,12 +101,15 @@ class FileManager:
     #Delete File 
         #Get Folder directory 
         #Get File name 
-        #Copy file date 
+    def DeleteFile(self):
 
-    #Move File
-        #Get Folder directory 
-        #Get File name 
-        #Copy file date 
+        # Delete the file if it exists
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"{file_name} has been deleted from the current directory.")
+        else:
+            print(f"{file_name} does not exist in the current directory.")
+
 
     #Change File Location
         #Get directory of current folder
