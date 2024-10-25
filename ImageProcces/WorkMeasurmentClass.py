@@ -9,27 +9,34 @@ root.withdraw()  # Hide the main window
 
 ImageDisplayWidth = 800
 ImageDisplayHeight = 600
-image_path = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\calimage.JPG'
+image_path = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\RulerPicture.jpg'
 nextimage = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\IMG_1687.JPG'
 
 # Class to process images
 class ImageProcess:
-    def __init__(self, image, width=800, height=600):
-        self.image = image
+    def __init__(self, image, width=1500, height=700):
+        # This store the image
+        self.image = image 
+         # This store the resized image
         self.imageresized = cv2.resize(self.image, (width, height))
-        self.original_image = self.imageresized.copy()  # Store a copy of the original image
-        self.nextimage = nextimage
-        self.points = []  # List to store clicked points
-        self.measurement = 1  # Assume the points represent 1 meter
-        self.center = []
-        self.puck = []
-        self.error_measurement_value = None  # Changed here
-        self.errorXY = []
-        self.errorImage = None
+        # Store a copy of the original image to allow resetting to its initial state.
+        # Modifications made to the image are applied directly and remain permanent.
+        self.original_image = self.imageresized.copy() 
+        # This store calibration points 
+        self.points = [] 
+        # This stores the distance between two points for calibration, default value is 100 cm or 1m
+        self.measurement = 100
+        # This store the points for the center of the gride
+        self.center = [] 
+        self.puck = [] # Points for the puck
+        self.error_measurement_value = None  
+        self.diff_x = None
+        self.diff_y = None
         self.scaling_factor = None
+        self.nextimage = nextimage
     
     # Update image to next image 
-    def updateImage(self, width=800, height=600):
+    def updateImage(self, width=1000, height=900):
         self.imageresized = cv2.resize(cv2.imread(self.nextimage), (width, height))
         self.original_image = self.imageresized.copy() 
 
@@ -78,21 +85,39 @@ class ImageProcess:
 
     # Method to display text at the bottom of the image without a background
     def displaytextbottom(self, text):
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        font_scale = 1
-        font_color = (255, 255, 255)  # White text
-        thickness = 2
-        text_size, _ = cv2.getTextSize(text, font, font_scale, thickness)
+        font = cv2.FONT_HERSHEY_PLAIN
+        font_scale = 1.5
+        font_color = (255, 0, 0)  # Blue text
+        thickness = 1
+        background_color = (200, 200, 200)  # Light gray color
+        transparency = 0.5  # Adjust the transparency level (0 = fully transparent, 1 = fully opaque)
 
-        # Calculate the position for the text at the bottom of the image
-        text_x = (self.imageresized.shape[1] - text_size[0]) // 2  # Center horizontally
-        text_y = self.imageresized.shape[0] - 10  # 10 pixels from the bottom
+        # Split the text into lines
+        lines = text.split('\n')
 
-        # Put the text on the image
-        cv2.putText(self.imageresized, text, (text_x, text_y), font, font_scale, font_color, thickness, cv2.LINE_AA)
+        # Calculate the initial position for the first line
+        text_x = self.imageresized.shape[1] - cv2.getTextSize(lines[0], font, font_scale, thickness)[0][0] - 10  # Align to the right with 10 pixels padding
+        start_y = self.imageresized.shape[0] - 10  # 10 pixels from the bottom
+
+        # Calculate the height of the background rectangle
+        total_height = sum(cv2.getTextSize(line, font, font_scale, thickness)[0][1] + 5 for line in lines) + 10  # Adding 10 pixels for padding
+
+        # Create a transparent overlay for the background
+        overlay = self.imageresized.copy()
+        cv2.rectangle(overlay, (text_x - 10, start_y - total_height), (self.imageresized.shape[1], start_y + 10), background_color, -1)  # Background rectangle
+
+        # Blend the overlay with the original image
+        cv2.addWeighted(overlay, transparency, self.imageresized, 1 - transparency, 0, self.imageresized)
+
+        # Put each line of text on the image
+        for i, line in enumerate(lines):
+            # Calculate the vertical position for each line
+            text_y = start_y - (i * (cv2.getTextSize(line, font, font_scale, thickness)[0][1] + 5))  # Adding 5 pixels spacing
+            cv2.putText(self.imageresized, line, (text_x, text_y), font, font_scale, font_color, thickness, cv2.LINE_AA)
 
         # Show the updated image with the text at the bottom
         cv2.imshow('Test Image', self.imageresized)
+
 
     # Method to display text in the middle of the image with a gray background
     def displaytextmiddle(self, text):
@@ -136,7 +161,7 @@ class ImageProcess:
         self.drawline(self.points[0], self.points[1])
 
         # Prompt the user for the calibration measurement
-        real_world_distance = simpledialog.askstring("Input", "Enter your value in meters:")
+        real_world_distance = simpledialog.askstring("Input", "Enter your value in cm:")
         
         # Convert the input to a float, handling possible errors
         try:
@@ -145,14 +170,16 @@ class ImageProcess:
             messagebox.showerror("Input Error", "Invalid input. Please enter a numeric value.")
             return  # Exit the method if input is invalid
 
+        
         # Calculate the pixel distance between the two points
         pixel_distance = np.sqrt((self.points[1][0] - self.points[0][0]) ** 2 + (self.points[1][1] - self.points[0][1]) ** 2)
 
         # Calculate the scaling factor (real-world distance per pixel)
         self.scaling_factor = real_world_distance / pixel_distance if pixel_distance > 0 else 0
 
+
         # Prepare the text to display
-        scaling_text = f"Scaling factor: {self.scaling_factor:.2f} meters/pixel"
+        scaling_text = f"Scaling factor: {self.scaling_factor:.7f} cm/pixel"
 
         # Reset the image to display results without losing original image
         self.imageresized = self.original_image.copy()  # Reset to the original image
@@ -165,13 +192,13 @@ class ImageProcess:
         # Display the result texts
         self.displaytextmiddle(f"Each Pixel is {scaling_text}")
 
-        cv2.waitKey(10000)  # Wait 10 seconds before proceeding
+        cv2.waitKey(500)  # Wait 10 seconds before proceeding
         cv2.destroyAllWindows()  # Close the window
     
         
 
     def errormeasurment(self):
-        self.reset()
+        self.reset() # Reset the image and points  
         cv2.waitKey(1)  # Optional, but ensures smoothness in some environments
         cv2.namedWindow('Test Image')  # Create the window
         
@@ -223,21 +250,17 @@ class ImageProcess:
 
     def calculate_error(self):
         if self.center and self.puck:
+            self.reset() # Reset the image and points  
+            cv2.waitKey(1)  # Optional, but ensures smoothness in some environments
+            cv2.namedWindow('Test Image')  # Create the window
             # Calculate the difference in coordinates
-            diff_x = self.puck[0] - self.center[0]
-            diff_y = self.puck[1] - self.center[1]
-
+            self.diff_x = self.puck[0] - self.center[0]
+            self.diff_y = self.puck[1] - self.center[1]
             # Calculate the Euclidean distance
-            error_distance = np.sqrt(diff_x**2 + diff_y**2)
+            self.error_measurement_value = np.sqrt(self.diff_x**2 + self.diff_y**2) * self.scaling_factor
 
-            # Prepare the error message
-            error_message = f"Error: {(error_distance * self.scaling_factor):.2f} meters"  # If you want it in meters
-            print(error_message)
-
-            # Display the error message
-            self.displaytextmiddle(error_message)
-
-            # Wait for a moment before proceeding
+            # display on bottom of the image the error measurement include error measument value, x error and y error
+            self.displaytextbottom(f"Error Measurement: {self.error_measurement_value:.2f} cm\nX Error: {self.diff_x * self.scaling_factor:.2f} cm\nY Error: {self.diff_y * self.scaling_factor:.2f} cm")
             cv2.waitKey(5000)  # Wait 5 seconds
         else:
             print("Error calculation skipped: Center or puck not defined.")
