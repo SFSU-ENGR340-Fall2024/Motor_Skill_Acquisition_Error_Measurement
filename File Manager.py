@@ -1,3 +1,4 @@
+
 ''' 
 File management
 
@@ -5,17 +6,22 @@ This should create a folder within the selected folder with
 results 
 
  '''
-import os 
+import os
+import shutil 
 
 class FileManager:
-    
-    #Need to create folder object 
-    
+     
     # Our Folder location as our attribute
     # Get the directory of the current file (Python file must be in folder with images)
     current_directory = os.path.dirname(os.path.abspath(__file__))
     print("Current directory:", current_directory)
     
+    #File attribute 
+    filepath = 
+
+
+
+
     
 #Folder methods 
     
@@ -28,7 +34,17 @@ class FileManager:
     #Deletes folder 
         #Get directory 
         #Select folder 
-        #Deletes folder 
+
+        #Deletes folder and it's content 
+    def DeleteFolder(self, current_directory):
+    # Delete the directory (only works if the directory is empty)
+        try:
+            shutil.rmtree(current_directory)
+            print(f"Successfully deleted the directory and its contents: {directory}")
+        except OSError as e:
+            print(f"Error: {e.strerror}")
+
+
 
     #Change Folder Location
         #Get directory of current folder
@@ -37,22 +53,41 @@ class FileManager:
 
 #File methods
 
-    #Create File
+    #Create File (This is the results file)
         #Get Folder directory
-            #Conditional for checking if file is created
-            #False if not there
-            #True if there
-        #Creates file 
+    def CreateFile(self):
+        filename = 'results.txt' 
+
+        with open(filename, 'w') as file:
+            file.write("X coordinates: " + "\n")       
+            file.write("Y coordinates: ")
 
     #Load file 
         #Get Folder directory 
         #Get File name 
         #Load File 
+    def LoadFile(self, filename, current_directory):
+        
+        #Finds file in directory
+        file_path = os.path.join(current_directory, filename)
+    
+        with open(file_path, 'r') as file:
+                content = file.read()  # Read the entire file
 
     #Copy Files
         #Get Folder directory 
         #Get File name 
         #Copy file date 
+    def CopyFile(self):
+
+        # Define the source file path (in the current directory)
+        source_file = os.path.join(os.getcwd(), file_ name)
+
+        # Define the destination file path (in the same directory, but with a different name)
+        destination_file = os.path.join(os.getcwd(), 'copy_of_' + filename + '.txt')
+
+        # Copy the file
+        shutil.copy(source_file, destination_file)
 
     #Delete File 
         #Get Folder directory 
@@ -75,5 +110,4 @@ class FileManager:
               
 if __name__ == '__main__':
     print(CreateFolder())
-
 
