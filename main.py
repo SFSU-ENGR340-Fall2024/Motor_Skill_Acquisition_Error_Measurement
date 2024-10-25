@@ -7,9 +7,9 @@ import os
 from PyQt5.QtWidgets import QApplication
 
 #class imports
-# from Image_Data import Image_Data
+from Image_Data import Image_Data
 from GUI.gui import GUI
-from GUI.gui import Start
+# from GUI.gui import Start
 #from ImageProcces.ImageprocessClass import Imageproccess
 
 #Main
@@ -33,7 +33,8 @@ if __name__ == '__main__':
     #init error calc, file handler
     #ip = Imageproccess()
     #Display Home GUI and init the GUI object
-    g = Start()
+    app = QApplication(sys.argv)
+    g = GUI()
     #IF image processing
     if g.last_button == 'Image Processing':
         #Display image display GUI
@@ -92,6 +93,7 @@ if __name__ == '__main__':
             #while the image_process is not finished
             while image_process_finished == False:
                 #load an image into the GUI
+                pass
                 
 
 

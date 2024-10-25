@@ -1,14 +1,19 @@
-import sys
+import sys, os
 from PyQt5.QtWidgets import (QWidget, QPushButton, QApplication, QLabel,
-                             QStackedWidget, QVBoxLayout, QFileDialog, QLabel)
+                             QStackedWidget, QVBoxLayout, QFileDialog)
 
 class GUI(QWidget):
     def __init__(self):
         super().__init__()
         self.__folder = ""
-        self.last_button = ""
+        # self.last_button = ""
         self.UI()
         self.get_folder()
+        # self.set_folder()
+        # self.select_folder()
+        # self.start_button()
+        # self.review_button()
+        # self.back_button()
     
     def get_folder(self):
         return self.__folder
@@ -22,17 +27,30 @@ class GUI(QWidget):
     
     def select_folder(self):
         self.set_folder()
+        return self.label.setText(self.get_folder())
         # self.last_button = "Select Folder"
-        # label_text = self.get_folder()
-        self.label.setText(self.get_folder())
-        return self.get_folder()
-        
+        # print(self.get_folder())
+        # print(self.last_button)
+        # return self.last_button
     
     def start_button(self):
-        self.pages.setCurrentIndex(1)
+        # self.pages.setCurrentIndex(1)
+        # self.last_button = 'Start Test'
+        # print(self.last_button)
+        return os.startfile('explorer.exe')
+        
 
     def review_button(self):
-        self.pages.setCurrentIndex(1)
+        # self.csv = self.get_folder() + "/data.csv"
+        self.results = self.get_folder() + '/results'
+        # os.startfile(self.csv)
+        if not os.path.exists(self.results):
+            raise FileNotFoundError('Results do not exist for this test')
+        
+        try:
+            return os.startfile(self.results)
+        except Exception as e:
+            raise Exception("Failed to open Directory")
     
     def back_button(self):
         self.pages.setCurrentIndex(0)
@@ -40,7 +58,7 @@ class GUI(QWidget):
         return self.button
         
     def ExitButton(self):
-        sys.exit()
+        return sys.exit()
 
     # UI design
     def UI(self):
@@ -52,7 +70,8 @@ class GUI(QWidget):
         self.pages.addWidget(self.home_page)
         self.pages.addWidget(self.page_2)
 
-        self.label = QLabel()
+        self.label = QLabel('No Folder Selected')
+        self.label.setStyleSheet('font-size: 20px')
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.label)
@@ -64,7 +83,7 @@ class GUI(QWidget):
         self.show()
 
     def Home(self):
-        page = QWidget()
+        self.page = QWidget()
 
         # Initialize Select Folder Button
         select = QPushButton('Select Folder')
@@ -93,8 +112,8 @@ class GUI(QWidget):
         vbox.addWidget(review)
         vbox.addWidget(exit_button)
 
-        page.setLayout(vbox)
-        return page     
+        self.page.setLayout(vbox)
+        return self.page     
     
     def Page2(self):
         self.page = QWidget()
