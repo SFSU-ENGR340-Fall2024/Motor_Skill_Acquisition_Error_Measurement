@@ -1,3 +1,4 @@
+
 ''' 
 File management
 
@@ -16,7 +17,10 @@ class FileManager:
     print("Current directory:", current_directory)
     
     #File attribute 
-    filepath 
+    filepath = 
+
+
+
 
     
 #Folder methods 
@@ -74,6 +78,16 @@ class FileManager:
         #Get Folder directory 
         #Get File name 
         #Copy file date 
+    def CopyFile(self):
+
+        # Define the source file path (in the current directory)
+        source_file = os.path.join(os.getcwd(), file_ name)
+
+        # Define the destination file path (in the same directory, but with a different name)
+        destination_file = os.path.join(os.getcwd(), 'copy_of_' + filename + '.txt')
+
+        # Copy the file
+        shutil.copy(source_file, destination_file)
 
     #Delete File 
         #Get Folder directory 
@@ -96,5 +110,4 @@ class FileManager:
               
 if __name__ == '__main__':
     print(CreateFolder())
-
 
