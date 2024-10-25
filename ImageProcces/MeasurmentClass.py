@@ -2,6 +2,7 @@ import cv2
 from tkinter import simpledialog, messagebox
 import tkinter as tk
 import numpy as np
+import DataClassTemp
 
 # Initialize Tkinter root (needed for simpledialog)
 root = tk.Tk()
@@ -12,7 +13,6 @@ ImageDisplayHeight = 600
 image_path = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\RulerPicture.jpg'
 nextimage = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\IMG_1687.JPG'
 
-# Class to process images
 class ImageProcess:
     def __init__(self, image, width=1500, height=700):
         # This store the image
