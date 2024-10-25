@@ -1,5 +1,6 @@
 import MeasurmentClass
 import DataClassTemp
+import cv2
 
 
 
