@@ -19,24 +19,23 @@ class FileManager:
         print("Current directory:", self.current_directory)
     
         #File attribute 
-        self.file =  
-
-
-
-
+        
     
 #Folder methods 
     
+    "Works"
     #Creates folder 
     #Note: Needs object 
-    def CreateFolder(self):
-        if not os.path.exists("path/to/demo_folder"): 
-              os.makedirs("path/to/demo_folder")
+    def CreateFolder():
+        os.makedirs("results", exist_ok=True)
+        print("Folder has been created")
 
+    "Works"
     #Open Folder
     #Open selected folder in the selected directory 
-    def OpenFolder(self):
-        os.startfile(self.current_directory)  
+    def OpenFolder():
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        os.startfile(current_directory)  
 
     #Deletes folder 
         #Get directory 
@@ -90,7 +89,7 @@ class FileManager:
     def CopyFile(self):
 
         # Define the source file path (in the current directory)
-        source_file = os.path.join(os.getcwd(), file_ name)
+        source_file = os.path.join(os.getcwd(), file_name)
 
         # Define the destination file path (in the same directory, but with a different name)
         destination_file = os.path.join(os.getcwd(), 'copy_of_' + filename + '.txt')
@@ -120,6 +119,6 @@ class FileManager:
               
               
               
-if __name__ == '__main__':
-    print(CreateFolder())
+if __name__ == "__main__":
+    FileManager.OpenFolder()
 
