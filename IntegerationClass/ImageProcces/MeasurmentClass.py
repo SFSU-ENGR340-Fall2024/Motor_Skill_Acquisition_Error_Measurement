@@ -2,7 +2,7 @@ import cv2
 from tkinter import simpledialog, messagebox
 import tkinter as tk
 import numpy as np
-import DataClassTemp
+
 
 # Initialize Tkinter root (needed for simpledialog)
 root = tk.Tk()

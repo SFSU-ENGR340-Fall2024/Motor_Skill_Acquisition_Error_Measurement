@@ -26,7 +26,3 @@ class DataClass:
         # This store the difference in x and y coordinates between the center and the puck
         self.diff_x = None
         self.diff_y = None
-        # This store the next image path
-        self.nextimage = nextimage
-
-data_instance = DataClass(image_path)

@@ -1,9 +1,9 @@
 from MeasurmentClass import ImageProcess
 from DataClassTemp import DataClass
-import cv2
+from GUICopy import GUI
 
-ImageDisplayWidth = 800
-ImageDisplayHeight = 600
+ImageDisplayWidth = 1500
+ImageDisplayHeight = 700
 image_path = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\RulerPicture.jpg'
 nextimage = r'C:\Users\milto\OneDrive\Desktop\ImagineProcessClass\.venv\data\IMG_1687.JPG'
 
