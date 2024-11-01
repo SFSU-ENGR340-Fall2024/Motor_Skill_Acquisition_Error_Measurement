@@ -2,7 +2,7 @@ import cv2
 class DataClass:
     def __init__(self, image, width=1500, height=700):
     # This store the image
-        self.image = image 
+        self.image = cv2.imread(image)
         # This store the resized image
         self.imageresized = cv2.resize(self.image, (width, height))
         # Store a copy of the original image to allow resetting to its initial state.
@@ -13,6 +13,9 @@ class DataClass:
         # This store the scaling factor for calibration
         self.scaling_factor = None
         # This stores the distance between two points for calibration, default value is 100 cm or 1m
+        self.real_dist = None
+
+        # Distance between calibration points
         self.measurement = 100
         # This store the points for the center of the gride position
         self.center = [] 
@@ -48,6 +51,9 @@ class DataClass:
     # Return the puck points
     def get_puck(self):
         return self.puck
+    # Real life Measure
+    def get_real_dist(self):
+        return self.real_dist
     # Return the error measurement value
     def get_error_measurement_value(self):
         return self.error_measurement_value
@@ -66,6 +72,12 @@ class DataClass:
     # Set the original image
     def set_original_image(self, image):
         self.original_image = image
+    # Set real-world distance
+    def set_real_dist(self, dist):
+        self.real_dist = dist
+    # append the calibration points
+    def append_points(self, point):
+        self.points.append(point)
     # Set the calibration points
     def set_points(self, points):
         self.points = points
