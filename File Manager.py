@@ -24,14 +24,12 @@ class FileManager:
 #Folder methods 
     
     "Works"
-    #Creates folder 
-    #Note: Needs object 
+    #Creates folder that for the results 
     def CreateFolder():
         os.makedirs("results", exist_ok=True)
         print("Folder has been created")
 
     "Works"
-    #Open Folder
     #Open selected folder in the selected directory 
     def OpenFolder():
         current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -59,12 +57,18 @@ class FileManager:
 
 #File methods
 
+    "Works but wanted to put into results folder"
     #Create File (This is the results file)
         #Get Folder directory
-    def CreateFile(self):
+    def CreateFile():
         filename = 'results.txt' 
 
-        with open(filename, 'w') as file:
+        current_directory = os.path.dirname(os.path.abspath(__file__))
+        file_name = "results.csv"
+
+        file_path = os.path.join(current_directory, file_name)
+
+        with open(file_path, 'w') as file:
             file.write("X coordinates: " + "\n")       
             file.write("Y coordinates: ")
 
@@ -73,7 +77,7 @@ class FileManager:
         #Get Folder directory 
         #Get File name 
         #Load File 
-    def LoadFile(self, filename, current_directory):
+    def LoadFile():
         
         #Finds file in directory
         file_path = os.path.join(current_directory, filename)
@@ -116,9 +120,11 @@ class FileManager:
         #Get directory of selected folder
         #Copy File
         #Paste File 
+
+    #Put File in certain directory (Image file to directory)
               
               
               
 if __name__ == "__main__":
-    FileManager.OpenFolder()
+    FileManager.CreateFile()
 
