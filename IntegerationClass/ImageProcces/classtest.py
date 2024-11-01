@@ -18,8 +18,15 @@ class classtest():
     # Input: x, y {integers} - the x and y coordinates of the point
     # Output: Redrawn image with the circle drawn
     def drawcircle(self, x, y, image):
-        cv2.circle(image, (x, y), 3, (255, 0, 0), 1)
-        cv2.imshow('Test Image', image)
+    # Draw a cross centered at (x, y) on the image
+        size = 8  # Half the length of each line in the cross (adjust as needed)
+        color = (0, 0, 255)  # Color of the cross
+        thickness = 1  # Thickness of the lines
+
+        # Horizontal line
+        cv2.line(image, (x - size, y), (x + size, y), color, thickness)
+        # Vertical line
+        cv2.line(image, (x, y - size), (x, y + size), color, thickness)
 
 
     # Method to check where the left mouse button is clicked
@@ -125,15 +132,16 @@ class classtest():
         while True:
             cv2.imshow('Calibration Window', self.image)  # Display the image
             # Exit the loop if two points have been selected
-            if len(object.get_points()) >= 2:
+            if len(self.points) >= 2:
                 print("Calibration complete with points:", image)
                 break
             # Wait for a short period to allow for window refresh
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 print("Calibration canceled.")
                 break
-        cv2.waitKey(1)  
+        cv2.waitKey(1000)  
         cv2.destroyAllWindows()  # Close the window
+        return self.points
 
     def testimage(self, image):
         cv2.imshow('Test Image', image)
