@@ -2,7 +2,7 @@ import cv2
 class DataClass:
     def __init__(self, image, width=1500, height=700):
     # This store the image
-        self.image = image 
+        self.image = cv2.imread(image)
         # This store the resized image
         self.imageresized = cv2.resize(self.image, (width, height))
         # Store a copy of the original image to allow resetting to its initial state.
@@ -66,6 +66,10 @@ class DataClass:
     # Set the original image
     def set_original_image(self, image):
         self.original_image = image
+
+    # append the calibration points
+    def append_points(self, point):
+        self.points.append(point)
     # Set the calibration points
     def set_points(self, points):
         self.points = points
