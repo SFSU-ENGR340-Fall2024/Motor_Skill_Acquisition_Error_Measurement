@@ -4,16 +4,19 @@ from classtest import classtest
 from DataClassTemp import DataClass
 from ImageProcces import ImageProcess
 from GUICopy import GUI
+from test import Test2
 from PyQt5.QtWidgets import QApplication
 
 ImageDisplayWidth = 1500
 ImageDisplayHeight = 700
-image_path = r"C:\Users\michc\Pictures\Screenshots\Screenshot 2023-10-22 234927.png"
+image_path = r"C:/Users/michc/Pictures/Screenshots/Screenshot 2023-10-22 234927.png"
 
 app = QApplication(sys.argv) # create application object
 guiObject = GUI()
 imageObject = DataClass(image_path, ImageDisplayWidth, ImageDisplayHeight)
 process = ImageProcess()
+testPage = Test2()
+
 
 def calibrate_system(Object):
     # Collection of points for calibration
@@ -26,15 +29,17 @@ def calibrate_system(Object):
     Object.set_measurement(dist)
     print("Distance between points:", Object.get_measurement())
     # Michael will put user interface to collect real-world distance
+    guiObject.DistanceInput()
     Object.set_real_dist(100)
     
-
-
-    
+def butt_connect():
+    cv2.imread(image_path)
+    calibrate_system(imageObject)
 
 if __name__ == '__main__':
     # image = cv2.imread(image_path)
-    calibrate_system(imageObject)
+    # calibrate_system(imageObject)
+    guiObject.set_start_button(butt_connect)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     sys.exit(app.exec_()) # execute app
