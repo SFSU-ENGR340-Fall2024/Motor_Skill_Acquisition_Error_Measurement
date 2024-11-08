@@ -16,6 +16,7 @@ guiObject = GUI()
 imageObject = DataClass(image_path, ImageDisplayWidth, ImageDisplayHeight)
 process = ImageProcess()
 testPage = Test2()
+the_dist = None
 
 
 def calibrate_system(Object):
@@ -30,10 +31,13 @@ def calibrate_system(Object):
     print("Distance between points:", Object.get_measurement())
     # Michael will put user interface to collect real-world distance
     guiObject.DistanceInput()
+    the_dist = guiObject.get_distance()
+    print("Entered Distance:", the_dist)
     Object.set_real_dist(100)
     
 def butt_connect():
     cv2.imread(image_path)
+    guiObject.pages.setCurrentIndex(1)
     calibrate_system(imageObject)
 
 if __name__ == '__main__':

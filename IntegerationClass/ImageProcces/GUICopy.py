@@ -1,12 +1,14 @@
 import sys, os, cv2
 from PyQt5.QtWidgets import (QWidget, QPushButton, QApplication, QLabel, QDialog,
                              QStackedWidget, QVBoxLayout, QFileDialog, QTextEdit)
+from PyQt5.QtCore import Qt
+
 # from ControlClassTemp import ControlClassTemp
 
 class GUI(QWidget): 
     def __init__(self):
         super().__init__()
-        self.__folder = ""
+        self.__folder = None
         # self.last_button = ""
         self.image = None
         self.points = []
@@ -54,6 +56,15 @@ class GUI(QWidget):
             return os.startfile(self.results)
         except Exception as e:
             raise Exception("Failed to open Directory")
+
+    def eventFilter(self, source, event):
+        """
+        Event filter to detect if the Enter key is pressed in the input field.
+        """
+        if event.type() == event.KeyPress and event.key() == Qt.Key_Return:
+            self.window.accept()  # Close the dialog
+            return True
+        return super().eventFilter(source, event)
     
     def back_button(self):
         """
@@ -63,11 +74,12 @@ class GUI(QWidget):
         self.button = "Back"
         return self.button
     
-    def confirm_button(self):
+    def get_distance(self):
         """
-        Description: Collect user input as data
+        Description: Collect user input for distance as data
         """
-        pass
+        self.dist = int(self.input.toPlainText().strip())
+        return self.dist
         
     def ExitButton(self):
         """
@@ -164,10 +176,13 @@ class GUI(QWidget):
         self.input = QTextEdit()
         self.input.setPlaceholderText('Enter Distance in meters (m)')
         self.input.setStyleSheet('font-size: 20px')
+        self.input.installEventFilter(self)
+        # self.dist = int(self.input.toPlainText().strip())
 
         # Initialize Confirm Button
         self.confirm = QPushButton('confirm')
         self.confirm.setStyleSheet('font-size: 20px')
+        self.confirm.clicked.connect(self.window.accept)
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.input)
