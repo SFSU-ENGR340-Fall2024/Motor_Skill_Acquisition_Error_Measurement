@@ -12,7 +12,7 @@ class Test(QWidget):
         self.page = QWidget()
         self.back = QPushButton('Back')
         self.back.setStyleSheet('font-size: 20px')
-        self.back.clicked.connect(GUI.back_button)
+        # self.back.clicked.connect(GUI.back_button)
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.back)

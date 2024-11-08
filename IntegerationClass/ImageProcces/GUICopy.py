@@ -1,48 +1,49 @@
 import sys, os, cv2
-from PyQt5.QtWidgets import (QWidget, QPushButton, QApplication, QLabel,
-                             QStackedWidget, QVBoxLayout, QFileDialog)
+from PyQt5.QtWidgets import (QWidget, QPushButton, QApplication, QLabel, QDialog,
+                             QStackedWidget, QVBoxLayout, QFileDialog, QTextEdit)
+# from ControlClassTemp import ControlClassTemp
 
-class GUI(QWidget):
+class GUI(QWidget): 
     def __init__(self):
         super().__init__()
         self.__folder = ""
         # self.last_button = ""
         self.image = None
         self.points = []
+        self.dist = None
         self.UI()
         self.get_folder()
         # self.set_folder()
         # self.select_folder()
-        # self.start_button()
+        # self.start_button = None
         # self.review_button()
         # self.back_button()
     
+    # Move to Data Class
     def get_folder(self):
         return self.__folder
     
+    # Move to Data Class
     def set_folder(self):
+        
         self.__folder = QFileDialog.getExistingDirectory(self, 'Select Folder')
         return self.__folder
     
-    # def get_last_button(self):
-    #     return self.__last_button
-    
     def select_folder(self):
+        """
+        Description:
+        """
         self.set_folder()
         return self.label.setText(self.get_folder())
-        # self.last_button = "Select Folder"
-        # print(self.get_folder())
-        # print(self.last_button)
-        # return self.last_button
     
-    def start_button(self):
-        # self.pages.setCurrentIndex(1)
-        # self.last_button = 'Start Test'
-        # print(self.last_button)
-        return os.startfile('explorer.exe')
+    def set_start_button(self, function):
+        return self.start.clicked.connect(function)
         
 
     def review_button(self):
+        """
+        Description:
+        """
         # self.csv = self.get_folder() + "/data.csv"
         self.results = self.get_folder() + '/results'
         # os.startfile(self.csv)
@@ -55,15 +56,31 @@ class GUI(QWidget):
             raise Exception("Failed to open Directory")
     
     def back_button(self):
+        """
+        Description:
+        """
         self.pages.setCurrentIndex(0)
         self.button = "Back"
         return self.button
+    
+    def confirm_button(self):
+        """
+        Description: Collect user input as data
+        """
+        pass
         
     def ExitButton(self):
+        """
+        Description:
+        """
         return sys.exit()
 
     # UI design
     def UI(self):
+        """
+        Description: Primary window of user interface. Holds all the pages
+                     that will be included in the final program
+        """
         # Create page stack
         self.pages = QStackedWidget(self)
         self.home_page = self.Home()
@@ -85,6 +102,13 @@ class GUI(QWidget):
         self.show()
 
     def Home(self):
+        """
+        Description: Initial page on start-up. Has four functions:
+                     - Select Folder: User selects directory of the test folder
+                     - Start Test: Perform image processing tests on the images within the selected folder
+                     - Review Data: If collected data already exist, view it
+                     - Exit: Close the program
+        """
         self.page = QWidget()
 
         # Initialize Select Folder Button
@@ -93,9 +117,8 @@ class GUI(QWidget):
         select.setStyleSheet('font-size: 20px')
 
         # Initialize Start Button
-        start = QPushButton('Start Test')
-        start.clicked.connect(self.start_button)
-        start.setStyleSheet('font-size: 20px')
+        self.start = QPushButton('Start Test')
+        self.start.setStyleSheet('font-size: 20px')
 
         # Initialize Review Button
         review = QPushButton('Review Data')
@@ -110,7 +133,7 @@ class GUI(QWidget):
         # Arrange buttons to vertical layout
         vbox = QVBoxLayout()
         vbox.addWidget(select)
-        vbox.addWidget(start)
+        vbox.addWidget(self.start)
         vbox.addWidget(review)
         vbox.addWidget(exit_button)
 
@@ -127,52 +150,88 @@ class GUI(QWidget):
         layout.addWidget(self.back)
         self.page.setLayout(layout)
         return self.page
+    
+    def DistanceInput(self):
+        """
+        Description: Pop-up Dialog for user to input desired real-world distance 
+                     that the selected points placed on an image represents
+        """
+        self.window = QDialog(self)
+        self.window.setGeometry(100, 100, 300, 200)
+        self.window.setWindowTitle('EnterDistance')
 
-        # Method to draw a circle on the image given the x and y coordinates and the image
-    # Input: x, y {integers} - the x and y coordinates of the point
-    # Output: Redrawn image with the circle drawn
-    def drawcircle(self, x, y, image):
-    # Draw a cross centered at (x, y) on the image
+        # Initialize Text box
+        self.input = QTextEdit()
+        self.input.setPlaceholderText('Enter Distance in meters (m)')
+        self.input.setStyleSheet('font-size: 20px')
+
+        # Initialize Confirm Button
+        self.confirm = QPushButton('confirm')
+        self.confirm.setStyleSheet('font-size: 20px')
+
+        self.layout = QVBoxLayout()
+        self.layout.addWidget(self.input)
+        self.layout.addWidget(self.confirm)
+        self.window.setLayout(self.layout)
+
+        self.window.exec()
+
+    def drawCross(self, x, y, image):
+        """
+        Description: Method to draw a cross on the image at place of mouse click
+                     Input: x/y coordinates represented as integers
+                     Output: Redrawn image with the cross drawn
+        """
+        # Draw a cross centered at (x, y) on the image
         size = 8  # Half the length of each line in the cross (adjust as needed)
         color = (0, 0, 255)  # Color of the cross
-        thickness = 1  # Thickness of the lines
+        thickness = 2  # Thickness of the lines
 
         # Horizontal line
         cv2.line(image, (x - size, y), (x + size, y), color, thickness)
         # Vertical line
         cv2.line(image, (x, y - size), (x, y + size), color, thickness)
 
-
-    # Method to check where the left mouse button is clicked
-    # Input: event, x, y, flags, param
-    # Output: x, y position of the mouse click
     def checkclicks(self, event, x, y, flags, param):
+        """
+        Description: Method to check left mouse-click location
+                     Input: event, x, y, flags, param
+                     Output: x, y position of the mouse click
+        """
         if event == cv2.EVENT_LBUTTONDOWN:  # Check if left mouse button is clicked
             print("Left mouse button clicked at:", x, y)
-            self.drawcircle(x, y,self.image)
+            self.drawCross(x, y,self.image)
             self.points.append((x, y))
         else:
             return None
         
-    # Method to draw a line between two points on the image
-    # Input: x1, y1, x2, y2 (two points), image
-    # Output: Redrawn image with the line drawn
     def drawline(self, x1, y1, x2, y2, image):
+        """
+        Description: Method to draw a line between two points on the image
+                     Input: x1, y1, x2, y2 -> x/y coordinates of two selected points
+                            image: current working image
+                     Output: Redrawn image with the line drawn
+        """
         cv2.line(image, (x1, y1), (x2, y2), (0, 0, 255), 1)
         cv2.imshow('Test Image', image)
 
-    # Method to clear the image by reloading the original image
-    # Input: image, original_image
-    # Output: none
     def restartimage(self, image, original_image):
+        """
+        Description: Method to clear the image by reloading the original image
+                     Input: image, original_image
+                     Output: none
+        """
         cv2.destroyAllWindows()
         cv2.waitKey(1)
         image = original_image
 
-    # Method to display text at the bottom of the image with a transparent background
-    # Input: image, text
-    # Output: image with text displayed
     def displaytextrightbottom(self, image, text):
+        """
+        Description: Method to display text at the bottom of the image with 
+                     a transparent background
+                     Input: image, text
+                     Output: image with text displayed
+        """
         font = cv2.FONT_HERSHEY_PLAIN
         font_scale = 1.5
         font_color = (255, 0, 0)  # Blue text
@@ -206,11 +265,13 @@ class GUI(QWidget):
         # Show the updated image with the text at the bottom
         cv2.imshow('Test Image', image)
 
-    # Method to display text at the middle of the image with a background
-    # Input: image, text
-    # Output: image with text displayed
-
     def displaytextcenter(self, image, text):
+        """
+        Description: Method to display text at the middle of the image 
+                     with a background
+                     Input: image, text
+                     Output: image with text displayed
+        """
         font = cv2.FONT_HERSHEY_SIMPLEX
         font_scale = 1
         font_color = (255, 255, 255)  # White text
@@ -233,11 +294,12 @@ class GUI(QWidget):
         # Show the updated image with the text in the middle
         cv2.imshow('Test Image', image)
 
-    # Method to collect the x and y coordinates of the two point for the calibration 
-    # Input: image
-    # Output: x1, y1, x2, y2
-
     def calibration_point_collection(self, image):
+        """
+        Description: Method to collect the x and y coordinates of the two point for the calibration 
+                     Input: image
+                     Output: x1, y1, x2, y2
+        """
         self.points = []
         self.image = image
         cv2.namedWindow('Calibration Window')  # Create the window
