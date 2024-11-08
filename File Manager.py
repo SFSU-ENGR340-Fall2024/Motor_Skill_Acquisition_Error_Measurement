@@ -25,7 +25,7 @@ class FileManager:
     "Works"
     #Creates folder that for the results 
     def CreateFolder():
-        os.makedirs("ResultsFolder", exist_ok=True)
+        os.makedirs("Results", exist_ok=True)
         print("Folder has been created")
 
     "Works"
@@ -52,7 +52,7 @@ class FileManager:
     #Change Folder Location
         #Get directory of current folder
         #Get directory of selected folder 
-        
+
 
 #File methods
 
@@ -72,6 +72,7 @@ class FileManager:
             file.write("X coordinates: " + "\n")       
             file.write("Y coordinates: ")
     
+    "Works"
     #Creates cvsfile called "results.csv"
     def CreateCSVFile():
 
@@ -87,6 +88,7 @@ class FileManager:
             file.write("X coordinates: " + "\n")       
             file.write("Y coordinates: ")
     
+    "Works"
     #Create excel file called "results.xlsx"
     def CreateXLSXFile():
 
@@ -134,7 +136,7 @@ class FileManager:
     #Delete File 
         #Get Folder directory 
         #Get File name 
-    def DeleteFile(self):
+    def DeleteFile():
 
         # Delete the file if it exists
         if os.path.exists(file_path):
@@ -143,7 +145,7 @@ class FileManager:
         else:
             print(f"{file_name} does not exist in the current directory.")
 
-
+    "Works"
     #Put File in certain directory (Image file to directory)
     def FileRelocation(filename):
 
@@ -179,20 +181,21 @@ class FileManager:
 if __name__ == "__main__":
 
     #Open folder directory
-    FileManager.OpenFolder()
+    #FileManager.OpenFolder()
 
     #Creates results folder 
-    FileManager.CreateFolder()
+    #FileManager.CreateFolder()
 
     #Creates txt file 
-    FileManager.CreateTxtFile()
+    #FileManager.CreateTxtFile()
 
     #Creates csv file 
     FileManager.CreateCSVFile()
 
     #Creates excel file
-    FileManager.CreateXLSXFile()
+    #FileManager.CreateXLSXFile()
     
+    """
     #Relocate each file to results folder 
         #Text file 
     FileManager.FileRelocation("results.txt")
@@ -200,3 +203,4 @@ if __name__ == "__main__":
     FileManager.FileRelocation("results.csv")
         #XLSX File
     FileManager.FileRelocation("results.xlsx") 
+    """
