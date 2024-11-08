@@ -6,7 +6,8 @@ results
 
  '''
 import os
-import shutil 
+import shutil
+from PyQt5.QtWidgets import QFileDialog
 
 class FileManager:
      
@@ -15,6 +16,7 @@ class FileManager:
 
     def _init_(self):
         self.current_directory = os.path.dirname(os.path.abspath(__file__))
+        self.folder = None
         print("Current directory:", self.current_directory)
     
         #File attribute 
@@ -47,7 +49,19 @@ class FileManager:
         except OSError as e:
             print(f"Error: {e.strerror}")
 
-
+    #Getter for folder 
+    def get_folder(self):
+        return self.__folder
+    
+    #Setter for folder
+    def set_folder(self):
+        self.__folder = QFileDialog.getExistingDirectory(self, 'Select Folder')
+        return self.__folder
+    
+    #Select Folder function 
+    def select_folder(self):
+        self.set_folder()
+        return self.label.setText(self.get_folder())
 
     #Change Folder Location
         #Get directory of current folder
