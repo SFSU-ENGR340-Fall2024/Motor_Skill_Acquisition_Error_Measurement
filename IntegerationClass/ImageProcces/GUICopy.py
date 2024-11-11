@@ -277,8 +277,6 @@ class GUI(QWidget):
             text_y = start_y - (i * (cv2.getTextSize(line, font, font_scale, thickness)[0][1] + 5))  # Adding 5 pixels spacing
             cv2.putText(image, line, (text_x, text_y), font, font_scale, font_color, thickness, cv2.LINE_AA)
 
-        # Show the updated image with the text at the bottom
-        cv2.imshow('Test Image', image)
 
     def displaytextcenter(self, image, text):
         """
@@ -292,6 +290,7 @@ class GUI(QWidget):
         font_color = (255, 255, 255)  # White text
         thickness = 2
         text_size, _ = cv2.getTextSize(text, font, font_scale, thickness)
+        
 
         # Calculate the position for the text (centered)
         text_x = (image.shape[1] - text_size[0]) // 2
@@ -306,8 +305,54 @@ class GUI(QWidget):
         # Put the text on the image
         cv2.putText(image, text, (text_x, text_y), font, font_scale, font_color, thickness, cv2.LINE_AA)
 
-        # Show the updated image with the text in the middle
-        cv2.imshow('Test Image', image)
+    """
+    Description: Methods to collect the x and y coordinates of the puck
+    Input: image
+    Output: x, y
+    """
+    def center_point_collection(self, image):
+        """
+        Description: Method to collect the x and y coordinates of the puck
+                     Input: image
+                     Output: x, y
+        """
+        self.points = []
+        self.image = image
+        cv2.namedWindow('Center Point Collection Window')  # Create the window
+        cv2.setMouseCallback('Center Point Collection Window', self.checkclicks)
+        self.displaytextrightbottom( image, "Please click on the center")
+        while True:
+            cv2.imshow('Center Point Collection Window', self.image)
+            if self.points: # Check if center point is capture 
+                print("Calibration complete with center point:", self.points )
+                break
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                print("Calibration canceled.")
+                break
+        cv2.waitKey(1000)  
+        cv2.destroyAllWindows()  # Close the window
+        return self.points 
+    
+    def puck_point_collection(self, image):
+        """
+        Description: Method to collect the x and y coordinates of the puck
+                     Input: image
+                     Output: x, y
+        """
+        self.points = []
+        self.image = image
+        cv2.namedWindow('Puck Point Collection Window')
+        cv2.setMouseCallback('Puck Point Collection Window', self.checkclicks)
+        self.displaytextrightbottom(image,"Please click on the puck")
+        while True:
+            cv2.imshow('Puck Point Collection Window', self.image)
+            if self.points: # Check if center point is capture 
+                break
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+        cv2.waitKey(1000)  
+        cv2.destroyAllWindows()  # Close the window
+        return self.points 
 
     def calibration_point_collection(self, image):
         """
@@ -338,6 +383,8 @@ class GUI(QWidget):
         cv2.imshow('Test Image', image)
         cv2.waitKey(1000)
         cv2.destroyAllWindows()
+
+
 
     def create_window(self, image):
         cv2.namedWindow('Window for calibration')

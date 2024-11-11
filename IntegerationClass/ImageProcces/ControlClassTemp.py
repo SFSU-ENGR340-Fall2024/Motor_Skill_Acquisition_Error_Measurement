@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QApplication
 
 ImageDisplayWidth = 1500
 ImageDisplayHeight = 700
-image_path = r"C:/Users/michc/Pictures/Screenshots/Screenshot 2023-10-22 234927.png"
+image_path = "C:/Users/milto/OneDrive/Desktop/340FinalProject/Motor_Skill_Acquisition_Error_Measurement/IntegerationClass/ImageProcces/RulerPicture.jpg"
 
 app = QApplication(sys.argv) # create application object
 guiObject = GUI()
@@ -34,16 +34,42 @@ def calibrate_system(Object):
     the_dist = guiObject.get_distance()
     print("Entered Distance:", the_dist)
     Object.set_real_dist(100)
+
+def image_reset(Object):
+    # Restart the image to original
+    cv2.destroyAllWindows() 
+    Object.set_resized_image(Object.get_original_image())
+    Object.set_image(Object.get_original_image())
+    cv2.waitKey(10)  # Optional, but ensures smoothness in some environments
+    cv2.destroyAllWindows() 
+
+
+def first_error_measurement(Object):
+    # Restart the image to original
+    image_reset(Object)
+    # Collection of points for center and puck
+    imageObject.set_center(guiObject.center_point_collection(Object.get_resized_image()))
+    image_reset(Object)
+    imageObject.set_puck(guiObject.puck_point_collection(Object.get_resized_image()))
+    
+    
+
+def error_measurement(Object):
+    imageObject.set_puck(guiObject.puck_point_collection(Object.get_resized_image()))
     
 def butt_connect():
     cv2.imread(image_path)
     guiObject.pages.setCurrentIndex(1)
     calibrate_system(imageObject)
+    error_measurement(imageObject)
+    first_error_measurement(imageObject)
 
 if __name__ == '__main__':
     # image = cv2.imread(image_path)
     # calibrate_system(imageObject)
     guiObject.set_start_button(butt_connect)
+
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     sys.exit(app.exec_()) # execute app
+  
