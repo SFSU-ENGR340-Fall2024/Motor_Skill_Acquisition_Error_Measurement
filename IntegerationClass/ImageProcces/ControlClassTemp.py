@@ -34,13 +34,14 @@ def calibrate_system(Object):
     the_dist = guiObject.get_distance()
     print("Entered Distance:", the_dist)
     Object.set_real_dist(100)
+    Object.set_scaling_factor(process.scalingfactor(Object.get_real_dist(), Object.get_measurement())) 
 
 def image_reset(Object):
     # Restart the image to original
     cv2.destroyAllWindows() 
     Object.set_resized_image(Object.get_original_image())
     Object.set_image(Object.get_original_image())
-    cv2.waitKey(10)  # Optional, but ensures smoothness in some environments
+    cv2.waitKey(1)  # Optional, but ensures smoothness in some environments
     cv2.destroyAllWindows() 
 
 
@@ -51,8 +52,8 @@ def first_error_measurement(Object):
     imageObject.set_center(guiObject.center_point_collection(Object.get_resized_image()))
     image_reset(Object)
     imageObject.set_puck(guiObject.puck_point_collection(Object.get_resized_image()))
-    
-    
+    # calculate the real-world distance between the two points
+    Object.set_error_measurement_value(process.errorcalculationxy(Object.get_center()[0][0], Object.get_center()[0][1], Object.get_puck()[0][0], Object.get_puck()[0][1], Object.get_scaling_factor()))
 
 def error_measurement(Object):
     imageObject.set_puck(guiObject.puck_point_collection(Object.get_resized_image()))
@@ -65,10 +66,7 @@ def butt_connect():
     first_error_measurement(imageObject)
 
 if __name__ == '__main__':
-    # image = cv2.imread(image_path)
-    # calibrate_system(imageObject)
     guiObject.set_start_button(butt_connect)
-
     cv2.waitKey(0)
     cv2.destroyAllWindows()
     sys.exit(app.exec_()) # execute app
