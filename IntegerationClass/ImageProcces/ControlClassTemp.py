@@ -27,7 +27,9 @@ def calibrate_system(Object):
     print(cal_coord)
     dist = process.pixeldistance(cal_coord[0][0], cal_coord[0][1], cal_coord[1][0], cal_coord[1][1])
     Object.set_measurement(dist)
-    print("Distance between points:", Object.get_measurement())
+    guiObject.setMeasurement(dist)
+    QApplication.processEvents()
+    print("Distance between points:", guiObject.getMeasurement())
     # Michael will put user interface to collect real-world distance
     guiObject.DistanceInput()
     the_dist = guiObject.get_distance()
@@ -52,7 +54,8 @@ def first_error_measurement(Object):
     image_reset(Object)
     Object.set_puck(guiObject.puck_point_collection(Object.get_resized_image()))
     # calculate the real-world distance between the two points
-    Object.set_error_measurement_value(process.errorcalculationxy(Object.get_center()[0][0], Object.get_center()[0][1], Object.get_puck()[0][0], Object.get_puck()[0][1], Object.get_scaling_factor()))
+    Object.set_error_measurement_value(process.errorcalculationxy(Object.get_center()[0][0], Object.get_center()[0][1], Object.get_puck()[0][0],
+                                                                  Object.get_puck()[0][1], Object.get_scaling_factor()))
 
 def error_measurement(Object):
     Object.set_puck(guiObject.puck_point_collection(Object.get_resized_image()))
@@ -68,11 +71,11 @@ def butt_connect():
         imageObject = DataClass(image_path, ImageDisplayWidth, ImageDisplayHeight)
         # imageObject.set_image(image_path)
         calibrate_system(imageObject)
-        guiObject.set_image()
-        image_path = guiObject.get_image()
-        imageObject2 = DataClass(image_path, ImageDisplayWidth, ImageDisplayHeight)
-        error_measurement(imageObject2)
-        first_error_measurement(imageObject)
+        # guiObject.set_image()
+        # image_path = guiObject.get_image()
+        # imageObject2 = DataClass(image_path, ImageDisplayWidth, ImageDisplayHeight)
+        # error_measurement(imageObject2)
+        # first_error_measurement(imageObject)
 
 if __name__ == '__main__':
     guiObject.set_start_button(butt_connect)

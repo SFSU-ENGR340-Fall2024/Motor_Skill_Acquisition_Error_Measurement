@@ -13,11 +13,11 @@ class GUI(QWidget):
         # self.last_button = ""
         self.image = None
         self.points = []
-        self.scaleFactor = None
-        self.dist = None
-        self.measurement = None
-        self.puck = None
-        self.center = None
+        self.__scaleFactor = None
+        self.__dist = None
+        self.__measurement = None
+        self.__puck = None
+        self.__center = None
         self.UI()
         self.get_folder()
         # self.set_folder()
@@ -54,12 +54,26 @@ class GUI(QWidget):
         self.image = image_file
         return self.image
 
-    def get_scaleFactor(self):
-        pass
+    def getScaleFactor(self):
+        return self.__scaleFactor
 
-    def set_scaleFactor(self):
-        pass
+    def setScaleFactor(self, factor):
+        self.__scaleFactor = factor
+        return self.__scaleFactor
+
+    def getMeasurement(self):
+        return self.__measurement
+
+    def setMeasurement(self, meas):
+        self.__measurement = meas
+        return self.__measurement
     
+    def getPuck(self):
+        return self.__puck
+
+    def setPuck(self, thePuck):
+        self.__puck = thePuck
+        return self.__puck
 
     def review_button(self):
         """
@@ -174,14 +188,16 @@ class GUI(QWidget):
     def Page2(self):
         self.page = QWidget()
 
-        self.scaleFactor = QLabel('Scaling Factor:', self.data.get_scaling_factor())
+        # self.scaleFactor = QLabel('Scaling Factor:', self.getScaleFactor())
+        self.measurement = QLabel(f"Distance between the points: {self.getMeasurement()}")
+        self.measurement.setStyleSheet('font-size: 20px')
 
         self.back = QPushButton('Back to Main Menu')
         self.back.setStyleSheet('font-size: 20px')
         self.back.clicked.connect(self.back_button)
 
         layout = QVBoxLayout()
-        layout.addWidget(self.scaleFactor)
+        layout.addWidget(self.measurement)
         layout.addWidget(self.back)
         self.page.setLayout(layout)
         return self.page
