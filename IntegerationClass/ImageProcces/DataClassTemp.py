@@ -1,6 +1,6 @@
 import cv2
 class DataClass:
-    def __init__(self, image, width=1500, height=700):
+    def __init__(self, image, width=1500, height=700, folder = None):
     # This store the image
         self.image = cv2.imread(image)
         # This store the resized image
@@ -26,6 +26,8 @@ class DataClass:
         # This store the difference in x and y coordinates between the center and the puck
         self.diff_x = None
         self.diff_y = None
+        self.folder = folder
+
 
     # Return the image
     def get_image(self):

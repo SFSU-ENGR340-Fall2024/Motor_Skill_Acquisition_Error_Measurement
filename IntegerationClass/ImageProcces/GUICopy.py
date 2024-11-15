@@ -291,7 +291,6 @@ class GUI(QWidget):
                      Output: x, y position of the mouse click
         """
         if event == cv2.EVENT_LBUTTONDOWN:  # Check if left mouse button is clicked
-            print("Left mouse button clicked at:", x, y)
             self.drawCross(x, y,self.image)
             self.points.append((x, y))
         else:
@@ -401,7 +400,6 @@ class GUI(QWidget):
         while True:
             cv2.imshow('Center Point Collection Window', self.image)
             if self.points: # Check if center point is capture 
-                print("Calibration complete with center point:", self.points )
                 break
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 print("Calibration canceled.")
@@ -446,7 +444,6 @@ class GUI(QWidget):
             cv2.imshow('Calibration Window', self.image)  # Display the image
             # Exit the loop if two points have been selected
             if len(self.points) >= 2:
-                print("Calibration complete with points:", image)
                 break
             # Wait for a short period to allow for window refresh
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -461,14 +458,9 @@ class GUI(QWidget):
         cv2.waitKey(1000)
         cv2.destroyAllWindows()
 
-
-
     def create_window(self, image):
         cv2.namedWindow('Window for calibration')
         cv2.imshow('Window for calibration', image)
-   
-
-    
 
     
 # function to run the GUI class
