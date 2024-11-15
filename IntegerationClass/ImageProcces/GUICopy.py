@@ -14,8 +14,8 @@ class GUI(QWidget):
         self.image = None
         self.points = []
         self.__scaleFactor = None
-        self.__dist = None
         self.__measurement = None
+        self.__dist = None
         self.__puck = None
         self.__center = None
         self.UI()
@@ -67,10 +67,6 @@ class GUI(QWidget):
     def setMeasurement(self, meas):
         self.__measurement = meas
         return self.__measurement
-
-    def updatePage2Labels(self):
-        self.measurement.setText(f"Distance between the points: {self.getMeasurement()}")
-        return self.update()
     
     def getPuck(self):
         return self.__puck
@@ -78,6 +74,32 @@ class GUI(QWidget):
     def setPuck(self, thePuck):
         self.__puck = thePuck
         return self.__puck
+
+    def getCenter(self):
+        return self.__center
+    
+    def setCenter(self, center_coords):
+        self.__center = center_coords
+        return self.__center
+    
+    def get_distance(self):
+        return self.__dist
+    
+    def setDistance(self):
+        """
+        Description: Collect user input for distance as data
+        """
+        self.__dist = int(self.input.toPlainText().strip())
+        return self.__dist
+    
+    def updatePage2Labels(self):
+        self.scaleFactor.setText(f'Scaling Factor: {self.getScaleFactor()}')
+        self.measurement.setText(f"Distance between the points: {self.getMeasurement()}")
+        self.distance.setText(f'Real-World Distance: {self.get_distance()}')
+        self.puck.setText(f'Puck Coordinates: {self.getPuck()}')
+        self.center.setText(f'Grid Center Coordinates: {self.getCenter()}')
+        
+        return self.update()
 
     def review_button(self):
         """
@@ -110,13 +132,6 @@ class GUI(QWidget):
         self.pages.setCurrentIndex(0)
         self.button = "Back"
         return self.button
-    
-    def get_distance(self):
-        """
-        Description: Collect user input for distance as data
-        """
-        self.dist = int(self.input.toPlainText().strip())
-        return self.dist
         
     def ExitButton(self):
         """
@@ -192,16 +207,36 @@ class GUI(QWidget):
     def Page2(self):
         self.page = QWidget()
 
-        # self.scaleFactor = QLabel('Scaling Factor:', self.getScaleFactor())
+        # Label to display the scale factor of the image
+        self.scaleFactor = QLabel(f'Scaling Factor: {self.getScaleFactor()}')
+        self.scaleFactor.setStyleSheet('font-size: 20px')
+
+        # Label to display the distance between points on image in pixels
         self.measurement = QLabel(f"Distance between the points: {self.getMeasurement()}")
         self.measurement.setStyleSheet('font-size: 20px')
+
+        # Label to display the real-world distance entered by user
+        self.distance = QLabel(f'Real-World Distance: {self.get_distance()}')
+        self.distance.setStyleSheet('font-size: 20px')
+
+        # Label to display the coordinates of the puck
+        self.puck = QLabel(f'Puck Coordinates: {self.getPuck()}')
+        self.puck.setStyleSheet('font-size: 20px')
+
+        # Label to display the coordinates of the center
+        self.center = QLabel(f'Grid Center Coordinates: {self.getCenter()}')
+        self.center.setStyleSheet('font-size: 20px')
 
         self.back = QPushButton('Back to Main Menu')
         self.back.setStyleSheet('font-size: 20px')
         self.back.clicked.connect(self.back_button)
 
         layout = QVBoxLayout()
+        layout.addWidget(self.scaleFactor)
         layout.addWidget(self.measurement)
+        layout.addWidget(self.distance)
+        layout.addWidget(self.puck)
+        layout.addWidget(self.center)
         layout.addWidget(self.back)
         self.page.setLayout(layout)
         return self.page
@@ -220,7 +255,6 @@ class GUI(QWidget):
         self.input.setPlaceholderText('Enter Distance in meters (m)')
         self.input.setStyleSheet('font-size: 20px')
         self.input.installEventFilter(self)
-        # self.dist = int(self.input.toPlainText().strip())
 
         # Initialize Confirm Button
         self.confirm = QPushButton('confirm')
