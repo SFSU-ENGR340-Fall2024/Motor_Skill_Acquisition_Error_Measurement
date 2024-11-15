@@ -2,6 +2,7 @@ import sys, os, cv2
 from PyQt5.QtWidgets import (QWidget, QPushButton, QApplication, QLabel, QDialog,
                              QStackedWidget, QVBoxLayout, QFileDialog, QTextEdit)
 from PyQt5.QtCore import Qt
+from DataClassTemp import DataClass
 
 # from ControlClassTemp import ControlClassTemp
 
@@ -12,7 +13,11 @@ class GUI(QWidget):
         # self.last_button = ""
         self.image = None
         self.points = []
+        self.scaleFactor = None
         self.dist = None
+        self.measurement = None
+        self.puck = None
+        self.center = None
         self.UI()
         self.get_folder()
         # self.set_folder()
@@ -40,7 +45,21 @@ class GUI(QWidget):
     
     def set_start_button(self, function):
         return self.start.clicked.connect(function)
-        
+    
+    def get_image(self):
+        return self.image
+    
+    def set_image(self):
+        image_file, _ = QFileDialog.getOpenFileName(self, "Select Image", self.get_folder())
+        self.image = image_file
+        return self.image
+
+    def get_scaleFactor(self):
+        pass
+
+    def set_scaleFactor(self):
+        pass
+    
 
     def review_button(self):
         """
@@ -154,11 +173,15 @@ class GUI(QWidget):
     
     def Page2(self):
         self.page = QWidget()
-        self.back = QPushButton('Back')
+
+        self.scaleFactor = QLabel('Scaling Factor:', self.data.get_scaling_factor())
+
+        self.back = QPushButton('Back to Main Menu')
         self.back.setStyleSheet('font-size: 20px')
         self.back.clicked.connect(self.back_button)
 
         layout = QVBoxLayout()
+        layout.addWidget(self.scaleFactor)
         layout.addWidget(self.back)
         self.page.setLayout(layout)
         return self.page
