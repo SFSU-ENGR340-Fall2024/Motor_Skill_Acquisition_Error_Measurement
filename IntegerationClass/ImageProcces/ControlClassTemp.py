@@ -28,7 +28,8 @@ def calibrate_system(Object):
     dist = process.pixeldistance(cal_coord[0][0], cal_coord[0][1], cal_coord[1][0], cal_coord[1][1])
     Object.set_measurement(dist)
     guiObject.setMeasurement(dist)
-    QApplication.processEvents()
+    guiObject.updatePage2Labels()
+    # QApplication.processEvents()
     print("Distance between points:", guiObject.getMeasurement())
     # Michael will put user interface to collect real-world distance
     guiObject.DistanceInput()

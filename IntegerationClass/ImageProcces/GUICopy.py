@@ -67,6 +67,10 @@ class GUI(QWidget):
     def setMeasurement(self, meas):
         self.__measurement = meas
         return self.__measurement
+
+    def updatePage2Labels(self):
+        self.measurement.setText(f"Distance between the points: {self.getMeasurement()}")
+        return self.update()
     
     def getPuck(self):
         return self.__puck
