@@ -3,8 +3,11 @@
 __Team Member Roles__
 
 Milton Tinoco: Image Processing & Calibration Calculations, Integration
+
 Ethan Weldon: Data Class, Image Processing, Integration
+
 Michael Cabrera: GUI Design, Integration
+
 Joshua Samson: File Manager Class, Integration
 
 __About__
