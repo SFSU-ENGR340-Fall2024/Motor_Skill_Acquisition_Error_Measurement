@@ -1,6 +1,6 @@
 # Motor Skill Acquisition Error Measurement
 
-__Team Member Roles__
+__TEAM MEMBER ROLES__
 
 Milton Tinoco: Image Processing & Calibration Calculations, Integration
 
@@ -10,7 +10,7 @@ Michael Cabrera: GUI Design, Integration
 
 Joshua Samson: File Manager Class, Integration
 
-__About__
+__ABOUT__
 
 This program is for the Motor Skill Acquisition and Neuroscience Lab at San Francisco State Universiity
 run by Dr. Juliana Parma. It is meant to replace their use of LabView for the collection of error data
