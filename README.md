@@ -16,6 +16,9 @@ This program is for the Motor Skill Acquisition and Neuroscience Lab at San Fran
 run by Dr. Juliana Parma. It is meant to replace their use of LabView for the collection of error data
 in their tests.
 
+The current working version of the code is found in the SUBMISSION folder and is the final version of
+our code to be viewed for grading.
+
 __DOWNLOAD__
 
 To install, follow the following link to download the .zip file containing the completed .exe file
