@@ -54,7 +54,7 @@ class EditPage(QWidget):
 
         self.folder_path = None  # Store the selected folder path
         self.image_path = None  # Store the selected image path
-        self.axis = None  # Store the selected axis
+        self.axis_orientation = None  # Store the selected axis
         self.scaling_factor = None # Store the scaling factor
         self.image_list = []  # List to store the image paths in the selected folder
         self.image_index = 1 # Index of the current image being displayed
@@ -208,36 +208,33 @@ class EditPage(QWidget):
         relative_y = self.clicked_points[1][1] - origin_y
 
         # Determine vertical and horizontal values based on the selected axes
-        if  self.axis == 0 and self.vertical_axis == 3:
-            # Vertical: +y to -y (top to bottom)
-            # Horizontal: -x to +x (right to left)
+        try:
+            if self.axis_orientation == 0:
+                vertical_value = relative_x
+                horizontal_value = -relative_y
+
+            elif self.axis_orientation == 1:
+                vertical_value = relative_y
+                horizontal_value = relative_x
+                
+            elif self.axis_orientation == 2:
+                vertical_value = -relative_x
+                horizontal_value = relative_y
+
+            elif self.axis_orientation == 3:
+                vertical_value = -relative_y
+                horizontal_value = -relative_x
+
+            else:
+                raise ValueError("Invalid axis orientation")  # Force an error if out of range
+
+        except ValueError as e:
+            print(f"Error: {e}. Resetting to default orientation (0).")
+            self.axis_orientation = 0
             vertical_value = relative_x
             horizontal_value = -relative_y
 
-        elif self.axis == 1 and self.vertical_axis == 3:
-            # Vertical: +y to -y (bottom to top)
-            # Horizontal: +x to -x (right to left)
-            vertical_value = -relative_x
-            horizontal_value = -relative_y
-
-        elif self.axis == 2 and self.vertical_axis == 1:
-            # Vertical +x to -x (top to bottom)
-            # Horizontal: -y to +y (left to right)
-            vertical_value = -relative_y
-            horizontal_value = relative_x
-      
-        elif self.axis == 3 and self.vertical_axis == 1:
-            # Vertical +x to -x (top to bottom)
-            # Horizontal: +y to  (left to right)
-            vertical_value = -relative_y
-            horizontal_value = -relative_x
-     
-        else:
-            # Handle invalid combinations
-            raise ValueError(
-                f"Invalid axis combination: horizontal_axis={self.axis}, vertical_axis={self.vertical_axis}"
-            )
-
+        
 
         # Calculate the z-axis error using the adjusted vertical and horizontal values
         self.radial = self.calculations_manager.calculate_error(
@@ -261,7 +258,7 @@ class EditPage(QWidget):
 
         # Update the info label with the calculated data
         self.info_label.setText(
-            f"Image Number [{self.image_index}] | radial: {self.radial} | y axis: {self.yaxis} | x axis: {self.xaxis}"
+            f"Image Number [{self.image_index}] | radial: {self.radial} | x axis: {self.xaxis} | y axis: {self.yaxis}"
         )
 
         # Display the next image after a delay
@@ -323,7 +320,7 @@ class EditPage(QWidget):
         if self.image_index < len(self.image_list) - 1: 
             # Increment the image index and update information
             self.image_index += 1 
-            self.info_label.setText(f" Total Images [{len(self.image_list) - 1}] Image Trial [{self.image_index}] | radial: None | y axis: None | x axis: None")
+            self.info_label.setText(f" Total Images [{len(self.image_list) - 1}] Image Trial [{self.image_index}] | radial: None | x axis: None | y axis: None")
             self.image_viewer.draw_point_circle(self.center_point[0], self.center_point[1]) 
             self.load_image(self.image_index, text)
 
@@ -466,13 +463,15 @@ class EditPage(QWidget):
 
     # def load_image(self, image_path,index,text):
 
-    def set_data(self, scaling_factor, folder_path, image_path, axis, vertical_axis):
+    def set_data(self, scaling_factor, folder_path, image_path, axis_orientation):
      
         self.scaling_factor = scaling_factor
         self.folder_path = folder_path
-        self.axis = axis
+        self.axis_orientation = axis_orientation
         self.create_files_list(folder_path, image_path)
         self.track_clicks = 2
-        self.vertical_axis = vertical_axis
         self.image_viewer.track_clicks = self.track_clicks
         self.load_image(self.image_index, "Please click on the center")
+
+        # check the value in the axis_orientation by printing it
+        print(self.axis_orientation) 
