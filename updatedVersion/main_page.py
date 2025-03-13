@@ -36,7 +36,7 @@ from image_editing_page import EditPage
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("SFSU Image Editor")  # Set application window title
+        self.setWindowTitle("Motor Skill Acquisition Error Management System")  # Set application window title
         self.setGeometry(100, 100, 1600, 900)     # Set default window size
         self.initUI()                            # Initialize the UI components
 
@@ -74,8 +74,7 @@ class MainMenu(QWidget):
         layout = QVBoxLayout()  # Set vertical layout for buttons
 
         # Welcome text
-        welcome_label = QLabel("Welcome to the Motor Skill Acquisition Error Management System\n"
-                                "(SFSU Project 2024)")
+        welcome_label = QLabel("Motor Skill Acquisition Error Management System\n")
         welcome_label.setAlignment(Qt.AlignCenter)
         welcome_label.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 20px;")
         layout.addWidget(welcome_label)

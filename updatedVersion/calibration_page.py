@@ -100,7 +100,7 @@ class CalibrationPage(QWidget):
         graph_layout = QHBoxLayout()
 
         # Left button (previous graph)
-        self.left_button = QPushButton("⬅ Previous Graph")
+        self.left_button = QPushButton("⬅ Spin Orientation \n" "Left")
         self.left_button.clicked.connect(self.previous_image)
 
         # QLabel for displaying the graph
@@ -111,7 +111,7 @@ class CalibrationPage(QWidget):
         self.load_image()  # Load the initial image
 
         # Right button (next graph)
-        self.right_button = QPushButton("Next Graph ➡")
+        self.right_button = QPushButton("Spin Orientation ➡\n" "Right")
         self.right_button.clicked.connect(self.next_image)
 
         # Add elements to the horizontal layout (Buttons on sides, Image in center)
@@ -234,15 +234,8 @@ class CalibrationPage(QWidget):
                 distance, pixel_distance
             )
 
-            # Update the direction label with the calculated values
-            self.direction_label.setText(
-                f"Distance entered: {distance} cm\n"
-                f"Pixel Distance: {pixel_distance:.2f}\n"
-                f"Scaling Factor: {scaling_factor:.6f}"
-            )
-
             # Transition to the next page after a delay
-            QTimer.singleShot(2000, lambda: self.next_page(scaling_factor))
+            QTimer.singleShot(500, lambda: self.next_page(scaling_factor))
 
         except ValueError as e:
             # Display an error message box with the specific issue
@@ -255,9 +248,28 @@ class CalibrationPage(QWidget):
     # Input: self
     # Output: None
     def next_page(self, scaling_factor):
+
+        folder_path = self.folder_path
+        image_path = self.image_path
+        axis_orientation = self.axis_orientation
+        scaling_factortemp = scaling_factor
         # Transition to the next page (image editing page)
         # pass, scaling_factor, folder_path, image_path, axis
-        self.parent.edit_page.set_data(scaling_factor, self.folder_path,self.image_path,self.axis_orientation)
+        self.parent.edit_page.set_data(scaling_factortemp, folder_path,image_path,axis_orientation)
+        self.folder_path = None
+        self.image_path = None
+        self.clicked_points = []
+        self.axis_orientation = 0  # Reset orientation
+        self.image_viewer.click_list = []  # Reset points in ImageView
+        self.distance_input.clear()  # Clear distance input field
+        self.distance_input.setEnabled(False)  # Disable input until selection
+        self.reselect_points_button.setEnabled(False)  # Disable reselect button
+        self.reselect_points_button.hide()
+        self.select_image_button.setEnabled(False)
+        self.select_image_button.hide()
+        self.hide_graph_and_buttons()
+        self.direction_label.setText("Please select a folder with an image set, then select a calibration image.")
+        self.select_folder_button.setText("Select Folder")
         self.parent.stack.setCurrentWidget(self.parent.edit_page)
 
     
@@ -305,6 +317,7 @@ class CalibrationPage(QWidget):
         if len(self.clicked_points) == 2: 
             self.reselect_points_button.setVisible(True) # Show the reselect points button
             self.reselect_points_button.setEnabled(True) # Enable the reselect points button
+            self.direction_label.setText("Please select the orientation of the X, Y axis\n" "Then enter distance between the two selected points") # Prompt the user to select the vertical axis
             # Show the graph images
             self.show_graph_and_buttons()
             self.distance_input.setVisible(True) # Show the distance input field
