@@ -118,7 +118,7 @@ class EditPage(QWidget):
         # Info Label
 
         # Create text on top of image to display the information
-        self.info_label = QLabel(f"First Image:   | radial: {self.radial} | x axis: {self.xaxis} | y axis: {self.yaxis}")
+        self.info_label = QLabel(f"First Image:   | Radial: {self.radial} | X-axis: {self.xaxis} | Y-axis: {self.yaxis}")
         # Set the alignment of the text to center
         self.info_label.setAlignment(Qt.AlignCenter)
         # Set the font size, weight, and margin for the text
@@ -164,7 +164,7 @@ class EditPage(QWidget):
             # Check if the number of clicked points is 2 to calculate the values
             if len(self.clicked_points) == 2:
                 # update the direction label
-                self.direction_label.setText("Next image will be displayed in 2 seconds.")
+                self.direction_label.setText("Loading Next Image .....")
                 self.image_viewer.track_clicks = self.track_clicks
                 self.calulate_and_display() # Calculate the z-axis, y-axis, and x-axis values
 
@@ -179,7 +179,7 @@ class EditPage(QWidget):
             # Check if the number of clicked points is 2 to go to the next step to calculate the values
             if len(self.clicked_points) == 2:
                 # give update to the user
-                self.direction_label.setText("Next image will be displayed in 2 seconds.")
+                self.direction_label.setText("Loading Next Image .....")
                 # Set the center point to the first clicked point
                 self.center_point = self.clicked_points[0]
                 # Set the track_clicks to 1 to and update the next time to only need to click on the puck
@@ -256,7 +256,7 @@ class EditPage(QWidget):
         )
 
         # Update the info label with the calculated data
-        self.info_label.setText(f" On Trial [{self.image_index}] out of [{len(self.image_list) - 1}] || Previous Trial Values: || radial: {self.radial} | x axis: {self.xaxis} | y axis: {self.yaxis}")
+        self.info_label.setText(f" On Trial [{self.image_index}] out of [{len(self.image_list) - 1}] || Previous Trial Values: || Radial: {self.radial} | X-axis: {self.xaxis} | Y-axis: {self.yaxis}")
         # Display the next image after a delay
         QTimer.singleShot(500, lambda: self.next_image("Please click on the puck"))
 
@@ -316,7 +316,7 @@ class EditPage(QWidget):
         if self.image_index < len(self.image_list) - 1: 
             # Increment the image index and update information
             self.image_index += 1 
-            self.info_label.setText(f" On Trial [{self.image_index}] out of [{len(self.image_list) - 1}] || Previous Trial Values: || radial: {self.radial} | x axis: {self.xaxis} | y axis: {self.yaxis}")
+            self.info_label.setText(f" On Trial [{self.image_index}] out of [{len(self.image_list) - 1}] || Previous Trial Values: || Radial: {self.radial} | X-axis: {self.xaxis} | Y-axis: {self.yaxis}")
             self.image_viewer.draw_point_circle(self.center_point[0], self.center_point[1]) 
             self.load_image(self.image_index, text)
 
@@ -419,7 +419,7 @@ class EditPage(QWidget):
         if self.image_index > 1:
             self.image_index -= 1
             text = "Loaded previous image please click on the puck"
-            self.info_label.setText(f"Image Trial [{self.image_index} out of Total Images [{len(self.image_list) - 1}] ] | radial: None | y axis: None | x axis: None")
+            self.info_label.setText(f"Image Trial [{self.image_index} out of Total Images [{len(self.image_list) - 1}] ] | Radial: None | Y-axis: None | X-axis: None")
             self.file_manager.remove_last_line(self.result_file_path)
             self.radial = None
             self.xaxis = None

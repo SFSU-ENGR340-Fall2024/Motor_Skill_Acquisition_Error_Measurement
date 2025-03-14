@@ -57,6 +57,7 @@ class CalibrationPage(QWidget):
 
         # Set vertical layout
         self.layout = QVBoxLayout(self)
+        self.button_layout = QHBoxLayout()
 
         # Load image information
         self.image_folder = os.path.join(os.getcwd(), "programImages")
@@ -72,25 +73,23 @@ class CalibrationPage(QWidget):
         # Folder selection button
         self.select_folder_button = QPushButton("Select Folder")
         self.select_folder_button.clicked.connect(self.select_folder)
-        self.layout.addWidget(self.select_folder_button)
-
-        # Folder label
-        self.folder_label = QLabel("No folder selected.")
-        self.layout.addWidget(self.folder_label)
+        self.button_layout.addWidget(self.select_folder_button)
 
         # Image selection button
         self.select_image_button = QPushButton("Reselect Image")
         self.select_image_button.setEnabled(False)
         self.select_image_button.clicked.connect(self.select_image)
-        self.layout.addWidget(self.select_image_button)
+        self.button_layout.addWidget(self.select_image_button)
         self.select_image_button.hide()
 
         # Reselect points button
         self.reselect_points_button = QPushButton("Reselect Points")
         self.reselect_points_button.setEnabled(False)
         self.reselect_points_button.clicked.connect(self.reselect_points)
-        self.layout.addWidget(self.reselect_points_button)
+        self.button_layout.addWidget(self.reselect_points_button)
         self.reselect_points_button.hide()
+
+        self.layout.addLayout(self.button_layout)
 
         #####################################################
         # Graph Display Section with Buttons NEXT to Image
@@ -322,7 +321,6 @@ class CalibrationPage(QWidget):
         folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
         if folder_path:
             self.folder_path = folder_path # Store the selected folder path
-            self.folder_label.setText(f"Selected Folder: {folder_path}")# Display the selected folder path
             self.select_image_button.setEnabled(True)# Enable the select image button
             self.select_image_button.setVisible(True)#  Show the select image button
             self.select_image() # Call the select_image method
