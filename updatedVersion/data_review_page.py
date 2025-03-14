@@ -112,7 +112,7 @@ class DataReviewPage(QWidget):
         )
         if folder_path:
             # Construct the file path
-            results_file = os.path.join(folder_path, "Results", "Results_File.txt") # Results_File.txt path
+            results_file = os.path.join(folder_path, "Results_File.txt") # Results_File.txt path
             if os.path.exists(results_file):
                 self.file_path = results_file
                 self.read_and_display_data(results_file)
