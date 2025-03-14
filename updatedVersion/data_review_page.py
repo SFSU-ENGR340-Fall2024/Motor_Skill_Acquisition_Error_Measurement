@@ -64,41 +64,41 @@ class DataReviewPage(QWidget):
         # Button to load folder
         # This button allows the user to load a folder
         self.load_folder_button = QPushButton("Load Folder")
-        self.load_folder_button.setStyleSheet("font-size: 16px")
         self.load_folder_button.clicked.connect(self.load_folder)
         button_layout.addWidget(self.load_folder_button)
 
         # Button to export data
         # This button allows the user to export the data
         self.export_button = QPushButton("Export Data")
-        self.export_button.setStyleSheet("font-size: 16px")
         self.export_button.clicked.connect(self.export_data)
         button_layout.addWidget(self.export_button)
 
         # Button to display statistics
         # This button allows the user to display statistics
         self.stats_button = QPushButton("Show Statistics")
-        self.stats_button.setStyleSheet("font-size: 16px")
         self.stats_button.clicked.connect(self.show_statistics)
         button_layout.addWidget(self.stats_button)
 
         # Button to display graphs
         # This button allows the user to display graphs
         self.graphs_button = QPushButton("Show Graphs")
-        self.graphs_button.setStyleSheet("font-size: 16px")
         self.graphs_button.clicked.connect(self.show_graphs)
         button_layout.addWidget(self.graphs_button)
 
         # Button to go back to main menu
         # This button allows the user to go back to the main menu
         self.back_button = QPushButton("Back to Menu")
-        self.back_button.setStyleSheet("font-size: 16px")
         self.back_button.clicked.connect(self.go_to_main_menu)
         button_layout.addWidget(self.back_button)
 
         # Add button layout to the main layout
         layout.addLayout(button_layout)
         self.setLayout(layout)
+
+        # Set button font size
+        buttons = [self.back_button, self.stats_button, self.export_button,
+                   self.graphs_button, self.load_folder_button]
+        [button.setStyleSheet('font-size: 16px') for button in buttons]
 
     # Method: load_folder
     # Description:

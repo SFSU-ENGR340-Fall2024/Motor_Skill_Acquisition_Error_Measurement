@@ -111,6 +111,7 @@ class EditPage(QWidget):
         # Add buttons to horizontal layout
         buttons = [self.previous_button, self.center_button, self.skip_button, self.outlier_button]
         [axis_button_layout.addWidget(button) for button in buttons]
+        [button.setStyleSheet('font-size: 16px') for button in buttons]
 
         # Add the horizontal layout to the main vertical layout
         self.layout.addLayout(axis_button_layout)
