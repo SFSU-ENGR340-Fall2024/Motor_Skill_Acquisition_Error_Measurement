@@ -27,6 +27,7 @@ from calculation_class import CalculationsManager
 from file_manger_class import FileManager
 from image_interface import ImageView
 import os
+from calibration_page import CalibrationPage
 import math
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QLineEdit, QMessageBox
@@ -54,7 +55,7 @@ class EditPage(QWidget):
 
         self.folder_path = None  # Store the selected folder path
         self.image_path = None  # Store the selected image path
-        self.axis = None  # Store the selected axis
+        self.axis_orientation = None  # Store the selected axis
         self.scaling_factor = None # Store the scaling factor
         self.image_list = []  # List to store the image paths in the selected folder
         self.image_index = 1 # Index of the current image being displayed
@@ -63,18 +64,17 @@ class EditPage(QWidget):
         self.result_file_path = None # Store the path to the result file
         self.result_folder_path = None # Store the path to the result folder
         self.information_file_path = None # Store the path to the information file
-        self.track_clicks = 1  # Number of clicks to track
+        self.track_clicks = 0  # Number of clicks to track
         self.radial = None # Store the calculated z-axis value
         self.yaxis = None # Store the calculated y-axis value
         self.xaxis = None # Store the calculated x-axis value
-        self.vertical_axis = None # Store the vertical axis
 
         self.layout = QVBoxLayout() # Create a vertical layout for the page
 
         # Direction label 
 
         # Create text on the top of the page of directions for the user
-        self.direction_label = QLabel("Please click the center")
+        self.direction_label = QLabel("Direction: Click to select the center point")
         # Set the alignment of the text to center
         self.direction_label.setAlignment(Qt.AlignCenter)
         # Set the font size, weight, and margin for the text
@@ -119,7 +119,7 @@ class EditPage(QWidget):
         # Info Label
 
         # Create text on top of image to display the information
-        self.info_label = QLabel(f"Image Number [{self.image_index}] | radial: {self.radial} | y axis: {self.yaxis} | x axis: {self.xaxis}")
+        self.info_label = QLabel(f"First Image:   | Radial: {self.radial} | X-axis: {self.xaxis} | Y-axis: {self.yaxis}")
         # Set the alignment of the text to center
         self.info_label.setAlignment(Qt.AlignCenter)
         # Set the font size, weight, and margin for the text
@@ -165,7 +165,7 @@ class EditPage(QWidget):
             # Check if the number of clicked points is 2 to calculate the values
             if len(self.clicked_points) == 2:
                 # update the direction label
-                self.direction_label.setText("Next image will be displayed in 2 seconds.")
+                self.direction_label.setText("Loading Next Image .....")
                 self.image_viewer.track_clicks = self.track_clicks
                 self.calulate_and_display() # Calculate the z-axis, y-axis, and x-axis values
 
@@ -180,7 +180,7 @@ class EditPage(QWidget):
             # Check if the number of clicked points is 2 to go to the next step to calculate the values
             if len(self.clicked_points) == 2:
                 # give update to the user
-                self.direction_label.setText("Next image will be displayed in 2 seconds.")
+                self.direction_label.setText("Loading Next Image .....")
                 # Set the center point to the first clicked point
                 self.center_point = self.clicked_points[0]
                 # Set the track_clicks to 1 to and update the next time to only need to click on the puck
@@ -209,35 +209,31 @@ class EditPage(QWidget):
         relative_y = self.clicked_points[1][1] - origin_y
 
         # Determine vertical and horizontal values based on the selected axes
-        if  self.axis == 0 and self.vertical_axis == 3:
-            # Vertical: +y to -y (top to bottom)
-            # Horizontal: -x to +x (right to left)
+        try:
+            if self.axis_orientation == 0:
+                vertical_value = relative_x
+                horizontal_value = -relative_y
+
+            elif self.axis_orientation == 1:
+                vertical_value = relative_y
+                horizontal_value = relative_x
+
+            elif self.axis_orientation == 2:
+                vertical_value = -relative_x
+                horizontal_value = relative_y
+
+            elif self.axis_orientation == 3:
+                vertical_value = -relative_y
+                horizontal_value = -relative_x
+
+            else:
+                raise ValueError("Invalid axis orientation")  # Force an error if out of range
+
+        except ValueError as e:
+            print(f"Error: {e}. Resetting to default orientation (0).")
+            self.axis_orientation = 0
             vertical_value = relative_x
             horizontal_value = -relative_y
-
-        elif self.axis == 1 and self.vertical_axis == 3:
-            # Vertical: +y to -y (bottom to top)
-            # Horizontal: +x to -x (right to left)
-            vertical_value = -relative_x
-            horizontal_value = -relative_y
-
-        elif self.axis == 2 and self.vertical_axis == 1:
-            # Vertical +x to -x (top to bottom)
-            # Horizontal: -y to +y (left to right)
-            vertical_value = -relative_y
-            horizontal_value = relative_x
-      
-        elif self.axis == 3 and self.vertical_axis == 1:
-            # Vertical +x to -x (top to bottom)
-            # Horizontal: +y to  (left to right)
-            vertical_value = -relative_y
-            horizontal_value = -relative_x
-     
-        else:
-            # Handle invalid combinations
-            raise ValueError(
-                f"Invalid axis combination: horizontal_axis={self.axis}, vertical_axis={self.vertical_axis}"
-            )
 
 
         # Calculate the z-axis error using the adjusted vertical and horizontal values
@@ -261,12 +257,9 @@ class EditPage(QWidget):
         )
 
         # Update the info label with the calculated data
-        self.info_label.setText(
-            f"Image Number [{self.image_index}] | radial: {self.radial} | y axis: {self.yaxis} | x axis: {self.xaxis}"
-        )
-
+        self.info_label.setText(f" On Trial [{self.image_index}] out of [{len(self.image_list) - 1}] || Previous Trial Values: || Radial: {self.radial} | X-axis: {self.xaxis} | Y-axis: {self.yaxis}")
         # Display the next image after a delay
-        QTimer.singleShot(2000, lambda: self.next_image("Please click on the puck"))
+        QTimer.singleShot(500, lambda: self.next_image("Please click on the puck"))
 
     # Method: reselect_center
     # Description:
@@ -324,7 +317,7 @@ class EditPage(QWidget):
         if self.image_index < len(self.image_list) - 1: 
             # Increment the image index and update information
             self.image_index += 1 
-            self.info_label.setText(f" Total Images [{len(self.image_list) - 1}] Image Trial [{self.image_index}] | radial: None | y axis: None | x axis: None")
+            self.info_label.setText(f" On Trial [{self.image_index}] out of [{len(self.image_list) - 1}] || Previous Trial Values: || Radial: {self.radial} | X-axis: {self.xaxis} | Y-axis: {self.yaxis}")
             self.image_viewer.draw_point_circle(self.center_point[0], self.center_point[1]) 
             self.load_image(self.image_index, text)
 
@@ -337,6 +330,13 @@ class EditPage(QWidget):
             completion_label.setAlignment(Qt.AlignCenter)
             completion_label.setStyleSheet("font-size: 18px; font-weight: bold;")
             self.layout.addWidget(completion_label)
+
+            # Add a button to navigate to do another trial
+            trial_button = QPushButton("Another Trial")
+            trial_button.setStyleSheet("font-size: 16px; padding: 10px;")
+            trial_button.clicked.connect(self.go_back_to_trial)
+            self.layout.addWidget(trial_button)
+
 
             # Add a button to navigate to the Data Review Page
             data_review_button = QPushButton("Go to Data Review")
@@ -364,6 +364,7 @@ class EditPage(QWidget):
     def go_to_data_review(self):
         """Navigate to the DataReviewPage and load the result file."""
         if self.result_file_path:
+            self.restart_page()
             self.parent.data_review_page.read_and_display_data(self.result_file_path)
             self.parent.stack.setCurrentWidget(self.parent.data_review_page)
         else:
@@ -376,7 +377,25 @@ class EditPage(QWidget):
     # Output: None
     def go_to_main_menu(self):
         """Navigate back to the main menu."""
+        self.restart_page()
         self.parent.stack.setCurrentWidget(self.parent.main_menu)
+
+    # Going back for another trial
+    # Method: go_back_to_trial
+    # Description:
+    # Navigate back to the trial page.
+    # Input: None
+    # Output: None
+
+    def go_back_to_trial(self):
+        """Completely reset both CalibrationPage and EditPage before switching back to CalibrationPage."""
+        self.restart_page()
+    
+        #  Switch back to CalibrationPage
+        self.parent.stack.setCurrentWidget(self.parent.calibration_page)
+
+        print(" CalibrationPage and EditPage have been fully reset and reloaded.")
+
 
     # Method: exit_program
     # Description:
@@ -385,6 +404,7 @@ class EditPage(QWidget):
     # Output: None
     def exit_program(self):
         """Exit the program."""
+        self.restart_page()
         QApplication.quit()
 
         
@@ -400,12 +420,12 @@ class EditPage(QWidget):
         if self.image_index > 1:
             self.image_index -= 1
             text = "Loaded previous image please click on the puck"
-            self.info_label.setText(f"Previous:  Total Images [{len(self.image_list) - 1}] Image Trial [{self.image_index}] | radial: None | y axis: None | x axis: None")
+            self.info_label.setText(f"Image Trial [{self.image_index} out of Total Images [{len(self.image_list) - 1}] ] | Radial: None | Y-axis: None | X-axis: None")
             self.file_manager.remove_last_line(self.result_file_path)
             self.radial = None
             self.xaxis = None
             self.yaxis = None
-            self.load_image( self.image_index, text)
+            self.load_image(self.image_index, text)
         else:
             QMessageBox.warning(self, "Start of Images", "This is the first image.")
 
@@ -467,13 +487,39 @@ class EditPage(QWidget):
 
     # def load_image(self, image_path,index,text):
 
-    def set_data(self, scaling_factor, folder_path, image_path, axis, vertical_axis):
-     
+    def set_data(self, scaling_factor, folder_path, image_path, axis_orientation):
         self.scaling_factor = scaling_factor
         self.folder_path = folder_path
-        self.axis = axis
+        self.axis_orientation = axis_orientation
         self.create_files_list(folder_path, image_path)
         self.track_clicks = 2
-        self.vertical_axis = vertical_axis
         self.image_viewer.track_clicks = self.track_clicks
         self.load_image(self.image_index, "Please click on the center")
+
+        # check the value in the axis_orientation by printing it
+        print(self.axis_orientation) 
+
+
+    def restart_page(self):
+        parent_stack = self.parent.stack  # Get reference to QStackedWidget
+
+        # Remove existing instances of EditPage and CalibrationPage from QStackedWidget
+        parent_stack.removeWidget(self.parent.edit_page)
+        parent_stack.removeWidget(self.parent.calibration_page)
+
+        # Delete the old instances to free memory
+        self.parent.edit_page.deleteLater()
+        self.parent.calibration_page.deleteLater()
+
+        #  Create fresh instances of both pages
+        self.parent.calibration_page = CalibrationPage(self.parent)
+        self.parent.edit_page = EditPage(self.parent)
+
+        #  Add the new instances back to QStackedWidget
+        parent_stack.addWidget(self.parent.calibration_page)
+        parent_stack.addWidget(self.parent.edit_page)
+            
+        
+      
+
+        

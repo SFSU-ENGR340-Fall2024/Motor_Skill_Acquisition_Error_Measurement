@@ -72,12 +72,12 @@ class FileManager:
         if not os.path.exists(file_path):
             with open(file_path, "w") as file:
                 # Header with column names
-                file.write(f"{'Image Index':<15}{'Radial':<15}{'Y-Axis':<15}{'X-Axis':<15}\n")
+                file.write(f"{'Image Index':<15}{'Radial':<15}{'X-Axis':<15}{'Y-Axis':<15}\n")
                 file.write("=" * 60 + "\n")  # Separator line
 
         with open(file_path, "a") as file:
             # Append the data with labels
-            file.write(f"Image Trial: {image_index:<10} Radial: {radial:<10.2f} Y-Axis: {yaxis:<10.2f} X-Axis: {xaxis:<10.2f}\n")
+            file.write(f"Image Trial: {image_index:<10} Radial: {radial:<10.2f} X-Axis: {xaxis:<10.2f} Y-Axis: {yaxis:<10.2f}\n")
     
     # Method: remove_last_line
     # Description:

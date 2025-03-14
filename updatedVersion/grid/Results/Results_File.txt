@@ -1,2 +1,0 @@
-Image Trial: 1          Z-Axis: 11.59      Y-Axis: -6.37      X-Axis: 9.68      
-Image Trial: 2          Z-Axis: 10.29      Y-Axis: -0.11      X-Axis: -10.29    

@@ -23,13 +23,17 @@ from PyQt5.QtWidgets import (
     QGraphicsPixmapItem, QVBoxLayout, QWidget, QPushButton, QFileDialog, QLabel
 )
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QLineEdit, QMessageBox
-from PyQt5.QtGui import QPixmap, QPen
-from PyQt5.QtCore import Qt, QLineF
+from PyQt5.QtGui import QPixmap, QPen, QPainter, QFont
+from PyQt5.QtCore import Qt, QLineF,QPoint
 from file_manger_class import FileManager
 from calculation_class import CalculationsManager
 from image_interface import ImageView
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QLabel
 from PyQt5.QtCore import QTimer
+import os
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QLabel
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 
 
 # Class: CalibrationPage
@@ -39,211 +43,166 @@ from PyQt5.QtCore import QTimer
 # and set the distance between two points in the image to calculate a scaling factor for real-world measurements.
 # The user can then proceed to the image editing page to apply the scaling factor to other images.
 
+# Class: CalibrationPage
 class CalibrationPage(QWidget):
-    # Constructor for the CalibrationPage class
-    def __init__(self, parent):
-        super().__init__()
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
         # Set the parent widget
         self.parent = parent
 
-        # Initialize the file manager
+        # Initialize file and calculations managers
         self.file_manager = FileManager()
-
-        # Initialize the calculations manager
         self.calculations_manager = CalculationsManager()
 
-        # Set vertical layout for buttons
-        self.layout = QVBoxLayout()
+        # Set vertical layout
+        self.layout = QVBoxLayout(self)
+        self.button_layout = QHBoxLayout()
 
-        # Direction label 
+        # Load image information
+        self.image_folder = os.path.join(os.getcwd(), "programImages")
+        self.image_files = ["graph1.png", "graph2.png", "graph3.png", "graph4.png"]
+        self.axis_orientation = 0  # Start at the first image
 
-        # Create text on the top of the page of directions for the user
+        # Direction label
         self.direction_label = QLabel("Please select a folder with image set, then select a calibration image.") 
-        # Set the alignment of the text to center
         self.direction_label.setAlignment(Qt.AlignCenter)
-        # Set the font size, weight, and margin for the text
         self.direction_label.setStyleSheet("font-size: 20px; font-weight: bold; margin-bottom: 20px;")
-        # Add the text to the layout
         self.layout.addWidget(self.direction_label)
 
-        # Button to select folder
-        # Create a button to select a folder with images
+        # Folder selection button
         self.select_folder_button = QPushButton("Select Folder")
-        # Connect the button to the select_folder method
         self.select_folder_button.clicked.connect(self.select_folder)
-        # Add the button to the layout
-        self.layout.addWidget(self.select_folder_button)
+        self.button_layout.addWidget(self.select_folder_button)
 
-        # Label to display selected folder
-        # create a text label to display the selected folder path
-        self.folder_label = QLabel("No folder selected.")
-        # Set the alignment of the text to center
-        self.layout.addWidget(self.folder_label)
-
-        # Button to select image
-        # Create a button to select a calibration image
+        # Image selection button
         self.select_image_button = QPushButton("Reselect Image")
-        # Initially disable the button
-        self.select_image_button.setEnabled(False)  # Initially disabled
-        # Connect the button to the select_image method
+        self.select_image_button.setEnabled(False)
         self.select_image_button.clicked.connect(self.select_image)
-        # Add the button to the layout
-        self.layout.addWidget(self.select_image_button)
-        # Initially hide the button
+        self.button_layout.addWidget(self.select_image_button)
         self.select_image_button.hide()
 
-        # Button to reselect the points
-        # Create a button to reselect the points
+        # Reselect points button
         self.reselect_points_button = QPushButton("Reselect Points")
-        # Initially disable the button
         self.reselect_points_button.setEnabled(False)
-        # Connect the button to the reselect_points method
         self.reselect_points_button.clicked.connect(self.reselect_points)
-        # Add the button to the layout
-        self.layout.addWidget(self.reselect_points_button)
-        # Initially hide the button
+        self.button_layout.addWidget(self.reselect_points_button)
         self.reselect_points_button.hide()
 
-        #####################################################
-        # Horizontal Axis Selection Section
-        #####################################################
-
-        # Create a vertical layout for the horizontal axis selection
-        horizontal_axis_layout = QVBoxLayout()
-
-        # Label for horizontal axis selection
-        self.horizontal_axis_label = QLabel("Horizontal Axis Selection Left to Right") # Create a label for the horizontal axis selection
-        self.horizontal_axis_label.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 10px;") # Set the font size and weight for the label
-        horizontal_axis_layout.addWidget(self.horizontal_axis_label) # Add the label to the layout
-        # Hide the horizontal axis label
-        self.horizontal_axis_label.hide()
-
-        # Horizontal axis buttons layout
-        horizontal_axis_button_layout = QHBoxLayout()
-
-        # Create a button to select the x-axis from negative to positive left to right
-        self.negative_to_positive_x_button = QPushButton("-x 0 +x") 
-        self.negative_to_positive_x_button.setEnabled(False)
-        self.negative_to_positive_x_button.clicked.connect(self.negative_to_positive_x)
-        horizontal_axis_button_layout.addWidget(self.negative_to_positive_x_button)
-        self.negative_to_positive_x_button.setVisible(False)
-
-        # Create a button to select the x-axis from positive to negative right to left
-        self.positive_to_negative_x_button = QPushButton("x+ 0 -x")
-        self.positive_to_negative_x_button.setEnabled(False)
-        self.positive_to_negative_x_button.clicked.connect(self.positive_to_negative_x)
-        horizontal_axis_button_layout.addWidget(self.positive_to_negative_x_button)
-        self.positive_to_negative_x_button.setVisible(False)
-
-        # Create a button to select the y-axis from negative to positive top to bottom
-        self.negative_to_positive_y_button = QPushButton("-y 0 +y")
-        self.negative_to_positive_y_button.setEnabled(False)
-        self.negative_to_positive_y_button.clicked.connect(self.negative_to_positive_y)
-        horizontal_axis_button_layout.addWidget(self.negative_to_positive_y_button)
-        self.negative_to_positive_y_button.setVisible(False)
-
-        # Create a button to select the y-axis from positive to negative bottom to top
-        self.positive_to_negative_y_button = QPushButton("y+ 0 -y")
-        self.positive_to_negative_y_button.setEnabled(False)
-        self.positive_to_negative_y_button.clicked.connect(self.positive_to_negative_y)
-        horizontal_axis_button_layout.addWidget(self.positive_to_negative_y_button)
-        self.positive_to_negative_y_button.setVisible(False)
-
-        # Add horizontal axis buttons layout to the main horizontal axis layout
-        horizontal_axis_layout.addLayout(horizontal_axis_button_layout)
-        self.layout.addLayout(horizontal_axis_layout)
+        self.layout.addLayout(self.button_layout)
 
         #####################################################
-        # Vertical Axis Selection Section
+        # Graph Display Section with Buttons NEXT to Image
         #####################################################
 
-        # Create a vertical layout for the vertical axis selection
-        vertical_axis_layout = QVBoxLayout()
+        # Create a horizontal layout for the graph and buttons
+        graph_layout = QHBoxLayout()
 
-        # Label for vertical axis selection
-        self.vertical_axis_label = QLabel("Vertical Axis Selection Right Top to Bottom") # Create a label for the vertical axis selection
-        self.vertical_axis_label.setStyleSheet("font-size: 16px; font-weight: bold; margin-bottom: 10px;") # Set the font size and weight for the label
-        vertical_axis_layout.addWidget(self.vertical_axis_label) # Add the label to the layout
-        self.vertical_axis_label.hide() # Hide the vertical axis label
+        # Left button (previous graph)
+        self.left_button = QPushButton("⬅ Spin Orientation \n" "Left")
+        self.left_button.clicked.connect(self.previous_image)
+
+        # QLabel for displaying the graph
+        self.image_label = QLabel(self)
+        self.image_label.setAlignment(Qt.AlignCenter)
+        self.image_label.setScaledContents(True)
+        self.image_label.setFixedSize(150, 100)  # Set fixed size for consistency
+        self.load_image()  # Load the initial image
+
+        # Right button (next graph)
+        self.right_button = QPushButton("Spin Orientation ➡\n" "Right")
+        self.right_button.clicked.connect(self.next_image)
+
+        # Add elements to the horizontal layout (Buttons on sides, Image in center)
+        graph_layout.addWidget(self.left_button)  # Add left button
+        graph_layout.addWidget(self.image_label)  # Add image in center
+        graph_layout.addWidget(self.right_button)  # Add right button
+    
+        # Add the graph layout to the main layout
+        self.layout.addLayout(graph_layout)
         
+        # Hide 
+        
+        self.hide_graph_and_buttons()
+        
+        #####################################################
+        # Distance Input Section
+        #####################################################
 
-        # Vertical axis buttons layout
-        vertical_axis_button_layout = QHBoxLayout()
-
-        # Create a button to select the x-axis from negative to positive left to right
-        self.negative_to_positive_x_button_vertical = QPushButton("-x 0 +x")
-        self.negative_to_positive_x_button_vertical.setEnabled(False)
-        self.negative_to_positive_x_button_vertical.clicked.connect(self.negative_to_positive_x_vertical)
-        vertical_axis_button_layout.addWidget(self.negative_to_positive_x_button_vertical)
-        self.negative_to_positive_x_button_vertical.setVisible(False)
-
-        # Create a button to select the x-axis from positive to negative right to left
-        self.positive_to_negative_x_button_vertical = QPushButton("x+ 0 -x")
-        self.positive_to_negative_x_button_vertical.setEnabled(False)
-        self.positive_to_negative_x_button_vertical.clicked.connect(self.positive_to_negative_x_vertical)
-        vertical_axis_button_layout.addWidget(self.positive_to_negative_x_button_vertical)
-        self.positive_to_negative_x_button_vertical.setVisible(False)
-
-        # Create a button to select the y-axis from negative to positive top to bottom
-        self.negative_to_positive_y_button_vertical = QPushButton("-y 0 +y")
-        self.negative_to_positive_y_button_vertical.setEnabled(False)
-        self.negative_to_positive_y_button_vertical.clicked.connect(self.negative_to_positive_y_vertical)
-        vertical_axis_button_layout.addWidget(self.negative_to_positive_y_button_vertical)
-        self.negative_to_positive_y_button_vertical.setVisible(False)
-
-        # Create a button to select the y-axis from positive to negative bottom to top
-        self.positive_to_negative_y_button_vertical = QPushButton("y+ 0 -y")
-        self.positive_to_negative_y_button_vertical.setEnabled(False)
-        self.positive_to_negative_y_button_vertical.clicked.connect(self.positive_to_negative_y_vertical)
-        vertical_axis_button_layout.addWidget(self.positive_to_negative_y_button_vertical)
-        self.positive_to_negative_y_button_vertical.setVisible(False)
-
-        # Add vertical axis buttons layout to the main vertical axis layout
-        vertical_axis_layout.addLayout(vertical_axis_button_layout)
-        self.layout.addLayout(vertical_axis_layout)
-
-        # Label to display the selected vertical axis
-        self.distance_input = QLineEdit() # Create a text input field for the distance
-        # Set the placeholder text for the distance input field
+        # Distance input field
+        self.distance_input = QLineEdit()
         self.distance_input.setPlaceholderText("Enter distance between points in cm (e.g., 10)")
-        # Set the font size for the distance input field
         self.distance_input.setStyleSheet("font-size: 20px")
-        # Initially disable the distance input field
         self.distance_input.setEnabled(False)  # Enable after selecting two points
-        self.distance_input.installEventFilter(self) # Enable Enter key press event (doesn't work)
-        # Initially hide the distance input field
+        self.distance_input.installEventFilter(self)  # Enable Enter key press event
         self.layout.addWidget(self.distance_input)
-        # Initially hide the distance input field
         self.distance_input.returnPressed.connect(self.handle_enter_pressed)
-        # Initially hide the distance input field
-        self.distance_input.hide()
+        self.distance_input.hide()  # Initially hidden
 
-        # Image viewer
-        # Create an image viewer widget
+        #####################################################
+        # Image Viewer for Point Selection
+        #####################################################
+
+        # Image viewer for calibration selection
         self.image_viewer = ImageView()
-        # Set the image viewer to track two clicks
-        self.image_viewer.track_clicks = 2
-        # Add the image viewer to the layout
+        self.image_viewer.track_clicks = 2  # Track two clicks
         self.layout.addWidget(self.image_viewer)
 
         # Assign the layout to the widget
         self.setLayout(self.layout)
 
-        # Initialize variables
+        #####################################################
+        # Variables for Selection Tracking
+        #####################################################
 
-        # Folder and Image Paths
-        self.folder_path = None  # Store the selected folder path
-        self.image_path = None  # Store the selected image path
-        self.axis = None  # Store the selected axis
-        self.vertical_axis = None  # Store the selected vertical axis
-
-        # Tracked Clicks
-        self.clicked_points = []
-
-        # Connect the point_clicked signal from the ImageView to the point_clicked method
+        self.folder_path = None  # Store selected folder path
+        self.image_path = None  # Store selected image path
+        self.clicked_points = []  # Store clicked points
+        # Connect ImageView click signal
         self.image_viewer.point_clicked.connect(self.handle_point_clicked)
+        
+    def hide_graph_and_buttons(self):
+        """Hides the graph image and navigation buttons."""
+        self.image_label.hide()
+        self.left_button.hide()
+        self.right_button.hide()
+        
+    def show_graph_and_buttons(self):
+        """Shows the graph image and navigation buttons."""
+        self.image_label.show()
+        self.left_button.show()
+        self.right_button.show()
 
+    def load_image(self):
+            """Loads the current graph based on index."""
+            image_path = os.path.join(self.image_folder, self.image_files[self.axis_orientation])
+
+            if not os.path.exists(image_path):
+                print(f"❌ Error: Image not found at {image_path}")
+                self.image_label.setText(f"Error loading image: {self.image_files[self.axis_orientation]}")
+                return
+
+            pixmap = QPixmap(image_path)
+            if pixmap.isNull():
+                print(f"❌ Error: Unable to load image {image_path}")
+                self.image_label.setText(f"Error loading image: {self.image_files[self.axis_orientation]}")
+            else:
+                self.image_label.setPixmap(pixmap)  # Display image
+
+    def next_image(self):
+        """Go to the next image in the list."""
+        print("Before",self.axis_orientation)
+        self.axis_orientation = (self.axis_orientation + 1) % len(self.image_files)
+        print(self.axis_orientation)
+        self.load_image()
+    
+
+    def previous_image(self):
+        """Go to the previous image in the list."""
+        print("Before",self.axis_orientation)
+        self.axis_orientation = (self.axis_orientation - 1) % len(self.image_files)
+        print(self.axis_orientation)
+        self.load_image()
 
     # Method (handle_enter_pressed)
     # Description:
@@ -260,14 +219,6 @@ class CalibrationPage(QWidget):
             distance = float(self.distance_input.text())
             if distance <= 0:
                 raise ValueError("Distance must be a positive number.")
-
-            if self.axis is None or self.vertical_axis is None:
-                raise ValueError(" missing axis selection")
-            
-            if (self.vertical_axis == 0 or self.vertical_axis == 1) and (self.axis == 0 or self.axis == 1):
-                raise ValueError("Invalid axis selection")
-            if (self.vertical_axis == 2 or self.vertical_axis == 3) and (self.axis == 2 or self.axis == 3):
-                raise ValueError("Invalid axis selection")
             
             # Calculate pixel distance between the clicked points
             pixel_distance = self.calculations_manager.calculate_pixel_distance(
@@ -282,15 +233,8 @@ class CalibrationPage(QWidget):
                 distance, pixel_distance
             )
 
-            # Update the direction label with the calculated values
-            self.direction_label.setText(
-                f"Distance entered: {distance} cm\n"
-                f"Pixel Distance: {pixel_distance:.2f}\n"
-                f"Scaling Factor: {scaling_factor:.6f}"
-            )
-
             # Transition to the next page after a delay
-            QTimer.singleShot(2000, lambda: self.next_page(scaling_factor))
+            QTimer.singleShot(500, lambda: self.next_page(scaling_factor))
 
         except ValueError as e:
             # Display an error message box with the specific issue
@@ -303,127 +247,17 @@ class CalibrationPage(QWidget):
     # Input: self
     # Output: None
     def next_page(self, scaling_factor):
+
+        folder_path = self.folder_path
+        image_path = self.image_path
+        axis_orientation = self.axis_orientation
+        scaling_factortemp = scaling_factor
         # Transition to the next page (image editing page)
         # pass, scaling_factor, folder_path, image_path, axis
-        self.parent.edit_page.set_data(scaling_factor, self.folder_path, self.image_path,self.axis,self.vertical_axis)
+        self.parent.edit_page.set_data(scaling_factortemp, folder_path,image_path,axis_orientation)
         self.parent.stack.setCurrentWidget(self.parent.edit_page)
 
-    #####################################################
-    # Vertical Axis Selection Methods
-    #####################################################
-
-    # Method (negative_to_positive_x_vertical)
-    # Description:
-    # This method handles the selection of the x-axis from negative to positive left to right for vertical axis.
-    # It updates the direction label with the selected vertical axis and prompts the user to enter the distance in cm.
-    # Input: self
-    # Output: None
-    def negative_to_positive_x_vertical(self):
-        self.vertical_axis = 0
-        self.direction_label.setText("Selected vertical axis: -x 0 +x , please enter the distance in cm ")
-        self.distance_input.setEnabled(True)
-        self.distance_input.setVisible(True)
-       
-     
-
-    # Method (positive_to_negative_x_vertical)
-    # Description:
-    # This method handles the selection of the x-axis from positive to negative right to left.
-    # It updates the direction label with the selected vertical axis and prompts the user to enter the distance in cm.
-    # Input: self
-    # Output: None
-
-    def positive_to_negative_x_vertical(self):
-        self.vertical_axis = 1
-        self.direction_label.setText("Selected vertical axis: x+ 0 -x , please enter the distance in cm ")
-        self.distance_input.setEnabled(True)
-        self.distance_input.setVisible(True)
-     
-
-    # Method (negative_to_positive_y_vertical)
-    # Description:
-    # This method handles the selection of the y-axis from negative to positive top to bottom.
-    # It updates the direction label with the selected vertical axis and prompts the user to enter the distance in cm.
-    # Input: self
-    # Output: None
-
-    def negative_to_positive_y_vertical(self):
-        self.vertical_axis  = 2
-        self.direction_label.setText("Selected vertical axis: -y 0 +y , please enter the distance in cm ")
-        self.distance_input.setEnabled(True)
-        self.distance_input.setVisible(True)
     
-
-    # Method (positive_to_negative_y_vertical)
-    # Description:
-    # This method handles the selection of the y-axis from positive to negative bottom to top.
-    # It updates the direction label with the selected vertical axis and prompts the user to enter the distance in cm.
-    # Input: self
-    # Output: None
-        
-    def positive_to_negative_y_vertical(self):
-        self.vertical_axis = 3
-        self.direction_label.setText("Selected vertical axis: y+ 0 -y , please enter the distance in cm ")
-        self.distance_input.setEnabled(True)
-        self.distance_input.setVisible(True)
-
-    #####################################################
-    # Horizontal Axis Selection Methods
-    #####################################################
-       
-
-    # Method (negative_to_positive_x)
-    # Description:
-    # This method handles the selection of the x-axis from negative to positive left to right.
-    # It updates the direction label with the selected horizontal axis and prompts the user to enter the distance in cm.
-    # Input: self
-    # Output: None
-    def negative_to_positive_x(self):
-        self.axis = 0
-        self.direction_label.setText("Selected horizontal : -x 0 +x , please enter the distance in cm ")
-        self.distance_input.setEnabled(True)
-        self.distance_input.setVisible(True)
-
-    # Method (positive_to_negative_x)
-    # Description:
-    # This method handles the selection of the x-axis from positive to negative right to left.
-    # It updates the direction label with the selected vertical axis and prompts the user to enter the distance in cm.
-    # Input: self
-    # Output: None
-
-    def positive_to_negative_x(self):
-        self.axis = 1
-        self.direction_label.setText("Selected horizontal  axis: x+ 0 -x , please enter the distance in cm ")
-        self.distance_input.setEnabled(True)
-        self.distance_input.setVisible(True)
-
-    # Method (negative_to_positive_y)
-    # Description:
-    # This method handles the selection of the y-axis from negative to positive top to bottom.
-    # It updates the direction label with the selected vertical axis and prompts the user to enter the distance in cm.
-    # Input: self
-    # Output: None
-
-    def negative_to_positive_y(self):
-        self.axis = 2
-        self.direction_label.setText("Selected horizontal  axis: -y 0 +y , please enter the distance in cm ")
-        self.distance_input.setEnabled(True)
-        self.distance_input.setVisible(True)
-        
-
-    # Method (positive_to_negative_y)
-    # Description:
-    # This method handles the selection of the y-axis from positive to negative bottom to top.
-    # It updates the direction label with the selected vertical axis and prompts the user to enter the distance in cm.
-    # Input: self
-    # Output: None
-        
-    def positive_to_negative_y(self):
-        self.axis = 3
-        self.direction_label.setText("Selected horizontal  axis: y+ 0 -y , please enter the distance in cm ")
-        self.distance_input.setEnabled(True)
-        self.distance_input.setVisible(True)
-       
     # Method (reselect_points)
     # Description:
     # This method allows the user to reselect the two points in the image to set the distance.
@@ -432,68 +266,14 @@ class CalibrationPage(QWidget):
     # Output: None
 
     def reselect_points(self):
+        self.hide_graph_and_buttons()
         self.clicked_points = [] # Clear the clicked points
         self.reselect_points_button.setEnabled(False) # Disable the button
         self.image_viewer.click_list = [] # Clear the clicked points
         self.direction_label.setText("Please select new two points to set the distance")
         self.image_viewer.load_image(self.image_path) # Reload the image
-        self.hide_vertical_axis_buttons() # Hide the vertical axis buttons
-
-    # Method (enable_vertical_axis_buttons)
-    # Description:
-    # This method enables and displays the vertical axis selection buttons on the page.
-    # Input: self
-    # Output: None
-
-    def enable_vertical_axis_buttons(self):
-        self.vertical_axis_label.setVisible(True)
-        self.horizontal_axis_label.setVisible(True)
-        self.negative_to_positive_x_button.setEnabled(True)
-        self.positive_to_negative_x_button.setEnabled(True)
-        self.negative_to_positive_y_button.setEnabled(True)
-        self.positive_to_negative_y_button.setEnabled(True)
-        self.negative_to_positive_x_button.setVisible(True)
-        self.positive_to_negative_x_button.setVisible(True)
-        self.negative_to_positive_y_button.setVisible(True)
-        self.positive_to_negative_y_button.setVisible(True)
         
-        self.negative_to_positive_x_button_vertical.setEnabled(True)
-        self.positive_to_negative_x_button_vertical.setEnabled(True)
-        self.negative_to_positive_y_button_vertical.setEnabled(True)
-        self.positive_to_negative_y_button_vertical.setEnabled(True)
-        self.negative_to_positive_x_button_vertical.setVisible(True)
-        self.positive_to_negative_x_button_vertical.setVisible(True)
-        self.negative_to_positive_y_button_vertical.setVisible(True)
-        self.positive_to_negative_y_button_vertical.setVisible(True)
 
-    # Method (hide_vertical_axis_buttons)
-    # Description:
-    # This method hides and disables the vertical axis selection buttons on the page.
-    # The distance input field is also hidden and disabled.
-    # Input: self
-    # Output: None
-
-    def hide_vertical_axis_buttons(self):
-        self.distance_input.setEnabled(False)
-        self.distance_input.setVisible(False)
-        self.horizontal_axis_label.setVisible(False)
-        self.vertical_axis_label.setVisible(False)
-        self.negative_to_positive_x_button.setEnabled(False)
-        self.positive_to_negative_x_button.setEnabled(False)
-        self.negative_to_positive_y_button.setEnabled(False)
-        self.positive_to_negative_y_button.setEnabled(False)
-        self.negative_to_positive_x_button.setVisible(False)
-        self.positive_to_negative_x_button.setVisible(False)
-        self.negative_to_positive_y_button.setVisible(False)
-        self.positive_to_negative_y_button.setVisible(False)
-        self.negative_to_positive_x_button_vertical.setEnabled(False)
-        self.positive_to_negative_x_button_vertical.setEnabled(False)
-        self.negative_to_positive_y_button_vertical.setEnabled(False)
-        self.positive_to_negative_y_button_vertical.setEnabled(False)
-        self.negative_to_positive_x_button_vertical.setVisible(False)
-        self.positive_to_negative_x_button_vertical.setVisible(False)
-        self.negative_to_positive_y_button_vertical.setVisible(False)
-        self.positive_to_negative_y_button_vertical.setVisible(False)
 
     # Method (handle_point_clicked)
     # Description:
@@ -522,8 +302,11 @@ class CalibrationPage(QWidget):
         if len(self.clicked_points) == 2: 
             self.reselect_points_button.setVisible(True) # Show the reselect points button
             self.reselect_points_button.setEnabled(True) # Enable the reselect points button
-            self.direction_label.setText("Please select vertical axis!")
-            self.enable_vertical_axis_buttons() # Enable the vertical axis buttons
+            self.direction_label.setText("Please select the orientation of the X, Y axis\n" "Then enter distance between the two selected points") # Prompt the user to select the vertical axis
+            # Show the graph images
+            self.show_graph_and_buttons()
+            self.distance_input.setVisible(True) # Show the distance input field
+            self.distance_input.setEnabled(True) # Enable the distance input field  
             
     # Method (select_folder)
     # Description:
@@ -534,13 +317,10 @@ class CalibrationPage(QWidget):
 
     def select_folder(self):
         """Open a dialog to select a folder."""
-        self.hide_vertical_axis_buttons() # Hide the vertical axis buttons
-
         # Open a dialog to select a folder
         folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
         if folder_path:
             self.folder_path = folder_path # Store the selected folder path
-            self.folder_label.setText(f"Selected Folder: {folder_path}")# Display the selected folder path
             self.select_image_button.setEnabled(True)# Enable the select image button
             self.select_image_button.setVisible(True)#  Show the select image button
             self.select_image() # Call the select_image method
@@ -553,7 +333,6 @@ class CalibrationPage(QWidget):
     # Output: None
     def select_image(self):
         
-            self.hide_vertical_axis_buttons() # Hide the vertical axis buttons
             self.image_viewer.click_list = [] # Clear the clicked points
             self.clicked_points = [] # Clear the clicked points
             """Open a dialog to select an image from the selected folder."""
@@ -575,10 +354,4 @@ class CalibrationPage(QWidget):
                 self.image_viewer.load_image(image_path) # Load the selected image in the image viewer
                 self.direction_label.setText("Please select two points to set the distance") # Prompt the user to select two points
                 self.select_folder_button.setText("Reselect Folder")# Change the text of the select folder button
-
-
-
-
-        
-
 
