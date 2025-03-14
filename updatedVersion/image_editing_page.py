@@ -390,10 +390,10 @@ class EditPage(QWidget):
         """Completely reset both CalibrationPage and EditPage before switching back to CalibrationPage."""
         self.restart_page()
     
-        # ✅ Switch back to CalibrationPage
-        self.parent_stack.setCurrentWidget(self.parent.calibration_page)
+        #  Switch back to CalibrationPage
+        self.parent.stack.setCurrentWidget(self.parent.calibration_page)
 
-        print("✅ CalibrationPage and EditPage have been fully reset and reloaded.")
+        print(" CalibrationPage and EditPage have been fully reset and reloaded.")
 
 
     # Method: exit_program
@@ -502,19 +502,19 @@ class EditPage(QWidget):
     def restart_page(self):
         parent_stack = self.parent.stack  # Get reference to QStackedWidget
 
-        # ✅ Remove existing instances of EditPage and CalibrationPage from QStackedWidget
+        # Remove existing instances of EditPage and CalibrationPage from QStackedWidget
         parent_stack.removeWidget(self.parent.edit_page)
         parent_stack.removeWidget(self.parent.calibration_page)
 
-        # ✅ Delete the old instances to free memory
+        # Delete the old instances to free memory
         self.parent.edit_page.deleteLater()
         self.parent.calibration_page.deleteLater()
 
-        # ✅ Create fresh instances of both pages
+        #  Create fresh instances of both pages
         self.parent.calibration_page = CalibrationPage(self.parent)
         self.parent.edit_page = EditPage(self.parent)
 
-        # ✅ Add the new instances back to QStackedWidget
+        #  Add the new instances back to QStackedWidget
         parent_stack.addWidget(self.parent.calibration_page)
         parent_stack.addWidget(self.parent.edit_page)
             
