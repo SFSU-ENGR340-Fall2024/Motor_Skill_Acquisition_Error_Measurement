@@ -27,6 +27,7 @@ from calculation_class import CalculationsManager
 from file_manger_class import FileManager
 from image_interface import ImageView
 import os
+from calibration_page import CalibrationPage
 import math
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QLineEdit, QMessageBox
@@ -63,7 +64,7 @@ class EditPage(QWidget):
         self.result_file_path = None # Store the path to the result file
         self.result_folder_path = None # Store the path to the result folder
         self.information_file_path = None # Store the path to the information file
-        self.track_clicks = 1  # Number of clicks to track
+        self.track_clicks = 0  # Number of clicks to track
         self.radial = None # Store the calculated z-axis value
         self.yaxis = None # Store the calculated y-axis value
         self.xaxis = None # Store the calculated x-axis value
@@ -362,7 +363,7 @@ class EditPage(QWidget):
     def go_to_data_review(self):
         """Navigate to the DataReviewPage and load the result file."""
         if self.result_file_path:
-            self.restart_data()
+            self.restart_page()
             self.parent.data_review_page.read_and_display_data(self.result_file_path)
             self.parent.stack.setCurrentWidget(self.parent.data_review_page)
         else:
@@ -375,7 +376,7 @@ class EditPage(QWidget):
     # Output: None
     def go_to_main_menu(self):
         """Navigate back to the main menu."""
-        self.restart_data()
+        self.restart_page()
         self.parent.stack.setCurrentWidget(self.parent.main_menu)
 
     # Going back for another trial
@@ -384,10 +385,16 @@ class EditPage(QWidget):
     # Navigate back to the trial page.
     # Input: None
     # Output: None
+
     def go_back_to_trial(self):
-        """Navigate back to the trial page."""
-        self.restart_data()
-        self.parent.stack.setCurrentWidget(self.parent.calibration_page)
+        """Completely reset both CalibrationPage and EditPage before switching back to CalibrationPage."""
+        self.restart_page()
+    
+        # ✅ Switch back to CalibrationPage
+        self.parent_stack.setCurrentWidget(self.parent.calibration_page)
+
+        print("✅ CalibrationPage and EditPage have been fully reset and reloaded.")
+
 
     # Method: exit_program
     # Description:
@@ -396,7 +403,7 @@ class EditPage(QWidget):
     # Output: None
     def exit_program(self):
         """Exit the program."""
-        self.restart_data()
+        self.restart_page()
         QApplication.quit()
 
         
@@ -491,33 +498,27 @@ class EditPage(QWidget):
         # check the value in the axis_orientation by printing it
         print(self.axis_orientation) 
 
-    def restart_data(self):
-        # Hide all ending buttons and messages
-        self.direction_label.setText("Direction: Click to select the center point")
-        self.info_label.setText(f"First Image:   | radial: {self.radial} | x axis: {self.xaxis} | y axis: {self.yaxis}")
-        self.center_button.hide()
-        self.center_button.setEnabled(False)
-        self.image_viewer.clear_image()
-        self.image_viewer.click_list = []
-        self.image_viewer.track_clicks = 2
-    
 
+    def restart_page(self):
+        parent_stack = self.parent.stack  # Get reference to QStackedWidget
 
-        #
-        self.folder_path = None  # Store the selected folder path
-        self.image_path = None  # Store the selected image path
-        self.axis_orientation = None  # Store the selected axis
-        self.scaling_factor = None # Store the scaling factor
-        self.image_list = []  # List to store the image paths in the selected folder
-        self.image_index = 1 # Index of the current image being displayed
-        self.center_point = None  # Store the center point of the image
-        self.clicked_points = []  # List to store the clicked points on the image
-        self.result_file_path = None # Store the path to the result file
-        self.result_folder_path = None # Store the path to the result folder
-        self.information_file_path = None # Store the path to the information file
-        self.track_clicks = 1  # Number of clicks to track
-        self.radial = None # Store the calculated z-axis value
-        self.yaxis = None # Store the calculated y-axis value
-        self.xaxis = None # Store the calculated x-axis value
+        # ✅ Remove existing instances of EditPage and CalibrationPage from QStackedWidget
+        parent_stack.removeWidget(self.parent.edit_page)
+        parent_stack.removeWidget(self.parent.calibration_page)
+
+        # ✅ Delete the old instances to free memory
+        self.parent.edit_page.deleteLater()
+        self.parent.calibration_page.deleteLater()
+
+        # ✅ Create fresh instances of both pages
+        self.parent.calibration_page = CalibrationPage(self.parent)
+        self.parent.edit_page = EditPage(self.parent)
+
+        # ✅ Add the new instances back to QStackedWidget
+        parent_stack.addWidget(self.parent.calibration_page)
+        parent_stack.addWidget(self.parent.edit_page)
+            
+        
+      
 
         

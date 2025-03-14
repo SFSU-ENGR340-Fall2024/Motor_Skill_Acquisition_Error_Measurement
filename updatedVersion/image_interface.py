@@ -40,7 +40,7 @@ class ImageView(QGraphicsView):
 
         self.scale_factor = 1.1 # Set the scale factor for zooming
         self.image_selected = False # Flag to check if an image is loaded
-        self.track_clicks = None # Number of clicks to track
+        self.track_clicks = 0 # Number of clicks to track
         self.click_list = [] # List to store clicked points
 
     # Method: draw_point_circle
@@ -57,6 +57,12 @@ class ImageView(QGraphicsView):
         )
         ellipse_item.setBrush(Qt.green)  # Set the brush color to yellow
 
+    def remove_image(self):
+        """Remove the currently displayed image and reset image-related attributes."""
+        self.scene.clear()  # Clear the scene (removes image and annotations)
+        self.image_selected = False  # Reset the flag indicating image presence
+        self.click_list = []  # Clear stored click points
+        self.track_clicks = 0  # Reset tracking limit
 
     # Method: load_image
     # Description:

@@ -263,11 +263,13 @@ class CalibrationPage(QWidget):
         self.image_viewer.click_list = []  # Reset points in ImageView
         self.distance_input.clear()  # Clear distance input field
         self.distance_input.setEnabled(False)  # Disable input until selection
+        self.distance_input.hide()  # Hide the distance input field
         self.reselect_points_button.setEnabled(False)  # Disable reselect button
         self.reselect_points_button.hide()
         self.select_image_button.setEnabled(False)
         self.select_image_button.hide()
         self.hide_graph_and_buttons()
+        self.image_viewer.remove_image() 
         self.direction_label.setText("Please select a folder with an image set, then select a calibration image.")
         self.select_folder_button.setText("Select Folder")
         self.parent.stack.setCurrentWidget(self.parent.edit_page)
