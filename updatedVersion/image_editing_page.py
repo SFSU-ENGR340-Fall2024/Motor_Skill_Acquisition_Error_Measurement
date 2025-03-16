@@ -21,28 +21,26 @@
 # Import necessary libraries
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton
-from PyQt5.QtGui import QPixmap, QImage
-from PyQt5.QtCore import Qt, QPoint, QTimer, pyqtSignal
+from PyQt5.QtCore import Qt, QTimer
 from calculation_class import CalculationsManager
 from file_manger_class import FileManager
 from image_interface import ImageView
 import os
 from calibration_page import CalibrationPage
-import math
 from PyQt5.QtWidgets import QMessageBox
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QLineEdit, QMessageBox
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget, QTableWidgetItem, QHBoxLayout, QFileDialog
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QLabel, QHBoxLayout
 
 
-# Class: EditPage
-# Description:
-# This class represents the image editing page where users can select points on images to calculate
-# real-world measurements. The EditPage class allows users to select a center point and a puck point
-# on the image to calculate the z-axis, y-axis, and x-axis values. The calculated values are displayed
-# on the screen and saved to a text file. The page also provides navigation options to move between images
-# and return to the main menu. At the end of the image list, users can choose to go to the data review page,
-# return to the main menu, or exit the program.
 class EditPage(QWidget):
+    """
+    Description: This class represents the image editing page where users can select points on images to calculate
+                 real-world measurements. The EditPage class allows users to select a center point and a puck point
+                 on the image to calculate the z-axis, y-axis, and x-axis values. The calculated values are displayed
+                 on the screen and saved to a text file. The page also provides navigation options to move between images
+                 and return to the main menu. At the end of the image list, users can choose to go to the data review page,
+                 return to the main menu, or exit the program.
+    """
     def __init__(self, parent): 
         super().__init__()
         self.parent = parent # Save the reference to the parent
@@ -139,20 +137,19 @@ class EditPage(QWidget):
         # Connect the point_clicked signal from the ImageView to the point_clicked method
         self.image_viewer.point_clicked.connect(self.handle_point_clicked)
 
-    # Method: handle_point_clicked
-    # Description:
-    # Handle the event when a point is clicked on the image.
-    # Append the clicked point to the list of clicked points.
-    # Calculate the z-axis, y-axis, and x-axis values based on the selected points.
-    # Append the calculated data to the results file.
-    # Update the info label with the calculated data.
-    # Display the next image after a delay.
-    # Input: x - x-coordinate of the clicked point
-    #        y - y-coordinate of the clicked point
-    # Output: None
 
     def handle_point_clicked(self, x, y):
-
+        """
+        Description: Handle the event when a point is clicked on the image.
+                     Append the clicked point to the list of clicked points.
+                     Calculate the z-axis, y-axis, and x-axis values based on the selected points.
+                     Append the calculated data to the results file.
+                     Update the info label with the calculated data.
+                     Display the next image after a delay.
+        Input: x - x-coordinate of the clicked point
+               y - y-coordinate of the clicked point
+        Output: None
+        """
         # check if the track_clicks is 1 which means that center point is selected
         if self.track_clicks == 1:
             # Append the center point if not already in the list
@@ -191,17 +188,16 @@ class EditPage(QWidget):
                 self.center_button.show() # Show the reselect center button
                 self.center_button.setEnabled(True) # Enable the reselect center button
 
-    # Method: calulate_and_display
-    # Description:
-    # Adjust the coordinates based on the user selected axes and center point.
-    # Calculate the z-axis, y-axis, and x-axis values based on the selected points.
-    # Append the calculated data to the results file.
-    # Update the info label with the calculated data.
-    # 
-    # Input: None
-    # Output: None
-
     def calulate_and_display(self):
+        """
+        Description: Adjust the coordinates based on the user selected axes and center point.
+                     Calculate the z-axis, y-axis, and x-axis values based on the selected points.
+                     Append the calculated data to the results file.
+                     Update the info label with the calculated data.
+    
+        Input: None
+        Output: None
+        """
         # Calculate the offset to make clicked_points[0] the origin
         # Relative x and y values based on the origin point
         origin_x, origin_y = self.clicked_points[0]
@@ -261,28 +257,27 @@ class EditPage(QWidget):
         # Display the next image after a delay
         QTimer.singleShot(500, lambda: self.next_image("Please click on the puck"))
 
-    # Method: reselect_center
-    # Description:
-    # Allow the user to reselect the center point on the image.
-    # Reset the track_clicks to 2 and update the image viewer.
-    # Load the current image with a message to click on the center again.
-    # Input: None
-    # Output: None
     def reselect_center(self):
+        """
+        Description: Allow the user to reselect the center point on the image.
+                     Reset the track_clicks to 2 and update the image viewer.
+                     Load the current image with a message to click on the center again.
+        Input: None
+        Output: None
+        """
         self.track_clicks = 2
         self.image_viewer.track_clicks = self.track_clicks
         self.load_image(self.image_index, "Please click on the center again to reselect")
-    
-    # Method: load_image
-    # Description:
-    # Load the image at the specified index from the image list.
-    # Update the direction label with the specified text.
-    # Clear the clicked points and load the image in the image viewer.
-    # Input: index - index of the image to load
-    #        text - text to display in the direction label
-    # Output: None
+       
     def load_image(self,index,text):
-   
+        """
+        Description: Load the image at the specified index from the image list.
+                     Update the direction label with the specified text.
+                     Clear the clicked points and load the image in the image viewer.
+        Input: index - index of the image to load
+               text - text to display in the direction label
+        Output: None
+        """
         # Validate index
         if index < 0 or index >= len(self.image_list):
             raise IndexError("Index out of range for image list.")
@@ -303,16 +298,15 @@ class EditPage(QWidget):
         if self.track_clicks == 1:
             self.image_viewer.draw_point_circle(self.center_point[0], self.center_point[1])
 
-    # Method: next_image
-    # Description:
-    # Load the next image in the image list.
-    # Increment the image index and update the information label.
-    # Draw the center point on the image viewer.
-    # Load the next image with a message to click on the center.
-    # Input: text - text to display in the direction label
-    # Output: None
-
     def next_image(self, text):
+        """
+        Description: Load the next image in the image list.
+                     Increment the image index and update the information label.
+                     Draw the center point on the image viewer.
+                     Load the next image with a message to click on the center.
+        Input: text - text to display in the direction label
+        Output: None
+        """
         # Check if the image index is less than the total number of images otherwise the user has reached the end of the images
         if self.image_index < len(self.image_list) - 1: 
             # Increment the image index and update information
@@ -356,13 +350,12 @@ class EditPage(QWidget):
             exit_button.clicked.connect(self.exit_program)
             self.layout.addWidget(exit_button)
 
-    # Method: go_to_data_review
-    # Description:
-    # Navigate to the DataReviewPage and load the result file.
-    # Input: None
-    # Output: None
     def go_to_data_review(self):
-        """Navigate to the DataReviewPage and load the result file."""
+        """
+        Description: Navigate to the DataReviewPage and load the result file.
+        Input: None
+        Output: None
+        """
         if self.result_file_path:
             self.restart_page()
             self.parent.data_review_page.read_and_display_data(self.result_file_path)
@@ -370,53 +363,47 @@ class EditPage(QWidget):
         else:
             QMessageBox.warning(self, "File Missing", "Result file path is not available.")
 
-    # Method: go_to_main_menu
-    # Description:
-    # Navigate back to the main menu.
-    # Input: None
-    # Output: None
     def go_to_main_menu(self):
-        """Navigate back to the main menu."""
+        """
+        Description: Navigate back to the main menu.
+        Input: None
+        Output: None
+        """
         self.restart_page()
         self.parent.stack.setCurrentWidget(self.parent.main_menu)
 
     # Going back for another trial
-    # Method: go_back_to_trial
-    # Description:
-    # Navigate back to the trial page.
-    # Input: None
-    # Output: None
-
     def go_back_to_trial(self):
-        """Completely reset both CalibrationPage and EditPage before switching back to CalibrationPage."""
+        """
+        Description: Navigate back to the trial page.
+        Input: None
+        Output: None
+        """
         self.restart_page()
     
         #  Switch back to CalibrationPage
         self.parent.stack.setCurrentWidget(self.parent.calibration_page)
 
-        print(" CalibrationPage and EditPage have been fully reset and reloaded.")
+        print("CalibrationPage and EditPage have been fully reset and reloaded.")
 
-
-    # Method: exit_program
-    # Description:
-    # Exit the program.
-    # Input: None
-    # Output: None
     def exit_program(self):
-        """Exit the program."""
+        """
+        Description: Exit the program.
+        Input: None
+        Output: None
+        """
         self.restart_page()
         QApplication.quit()
 
-        
-    # Method: previous_image
-    # Description:
-    # Load the previous image in the image list.
-    # Decrement the image index and update the information label.
-    # Remove the last line from the results file.
-    # Load the previous image with a message to click on the puck.
-    # Input: text - text to display in the direction label
-    # Output: None
     def previous_image(self,text):
+        """
+        Description: Load the previous image in the image list.
+        Decrement the image index and update the information label.
+        Remove the last line from the results file.
+        Load the previous image with a message to click on the puck.
+        Input: text - text to display in the direction label
+        Output: None
+        """
         if self.image_index > 1:
             self.image_index -= 1
             text = "Loaded previous image please click on the puck"
@@ -429,17 +416,14 @@ class EditPage(QWidget):
         else:
             QMessageBox.warning(self, "Start of Images", "This is the first image.")
 
-
-    # Method: create_files_list
-    # Description:
-    # Create the list of image files in the selected folder.
-    # Create the Results folder and Results file.
-    # Input: folder_path - path to the folder containing images
-    #        image_path - path to the selected image
-    # Output: None
-
     def create_files_list(self, folder_path, image_path):
-
+        """
+        Description: Create the list of image files in the selected folder.
+        Create the Results folder and Results file.
+        Input: folder_path - path to the folder containing images
+               image_path - path to the selected image
+        Output: None
+        """
         # Constants for results folder and file
         RESULTS_FOLDER_NAME = "Results"
         RESULTS_FILE_NAME = "Results_File.txt"
@@ -475,19 +459,15 @@ class EditPage(QWidget):
         else:
             self.result_file_path = results_file_path
 
-
-    # Method: set_data
-    # Description:
-    # Set the data required for image editing.
-    # Input: scaling_factor - scaling factor for the image
-    #        folder_path - path to the folder containing images
-    #        image_path - path to the selected image
-    #        result_file_path - path to the result file
-    # Output: None
-
-    # def load_image(self, image_path,index,text):
-
     def set_data(self, scaling_factor, folder_path, image_path, axis_orientation):
+        """
+        Description: Set the data required for image editing.
+        Input: scaling_factor - scaling factor for the image
+               folder_path - path to the folder containing images
+               image_path - path to the selected image
+               result_file_path - path to the result file
+        Output: None
+        """
         self.scaling_factor = scaling_factor
         self.folder_path = folder_path
         self.axis_orientation = axis_orientation
@@ -501,6 +481,11 @@ class EditPage(QWidget):
 
 
     def restart_page(self):
+        """
+        Description: Clear memory to start a new trial 
+        Input: None
+        Output: None
+        """
         parent_stack = self.parent.stack  # Get reference to QStackedWidget
 
         # Remove existing instances of EditPage and CalibrationPage from QStackedWidget
@@ -524,19 +509,25 @@ class EditPage(QWidget):
         Description: When trial with no existing picture exists, user presses this button
                      to add 'zero' data to resuts
         """
-        self.radial, self.xaxis, self.yaxis = 0, 0, 0
+        self.radial, self.xaxis, self.yaxis = 0, 0, 0 # Placeholder data
+        
+        # Add data to results file 
         self.file_manager.append_axis_data(
             self.result_file_path, self.image_index, self.radial, self.yaxis, self.xaxis
         )
-        self.next_image("Previous trial image DNE. Next image loaded")
+
+        self.next_image("Previous trial image DNE. Next image loaded") # Move on to next trial image
 
     def invalid_trial(self):
         """
         Description: When trial exists when puck lies outside of valid grid area, user
                      presses button to add outlier to results data
         """
-        self.radial, self.xaxis, self.yaxis = 99999, 99999, 99999
+        self.radial, self.xaxis, self.yaxis = 99999, 99999, 99999 # Placheholder data
+
+        # Add data to results files
         self.file_manager.append_axis_data(
             self.result_file_path, self.image_index, self.radial, self.yaxis, self.xaxis
         )
-        self.next_image("Previous trial was out of bounds. Next image loaded")
+
+        self.next_image("Previous trial was out of bounds. Next image loaded") # Move on to next trial image

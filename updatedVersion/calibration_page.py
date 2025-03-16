@@ -18,13 +18,10 @@
 
 # Import necessary libraries
 
-from PyQt5.QtWidgets import (
-    QApplication, QMainWindow, QGraphicsView, QGraphicsScene,
-    QGraphicsPixmapItem, QVBoxLayout, QWidget, QPushButton, QFileDialog, QLabel
-)
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QPushButton, QFileDialog, QLabel
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QFileDialog, QLineEdit, QMessageBox
-from PyQt5.QtGui import QPixmap, QPen, QPainter, QFont
-from PyQt5.QtCore import Qt, QLineF,QPoint
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
 from file_manger_class import FileManager
 from calculation_class import CalculationsManager
 from image_interface import ImageView
@@ -190,7 +187,9 @@ class CalibrationPage(QWidget):
                 self.image_label.setPixmap(pixmap)  # Display image
 
     def next_image(self):
-        """Go to the next image in the list."""
+        """
+        Description: Go to the next image in the list.
+        """
         print("Before",self.axis_orientation)
         self.axis_orientation = (self.axis_orientation + 1) % len(self.image_files)
         print(self.axis_orientation)
@@ -198,22 +197,23 @@ class CalibrationPage(QWidget):
     
 
     def previous_image(self):
-        """Go to the previous image in the list."""
+        """
+        Description: Go to the previous image in the list.
+        """
         print("Before",self.axis_orientation)
         self.axis_orientation = (self.axis_orientation - 1) % len(self.image_files)
         print(self.axis_orientation)
         self.load_image()
 
-    # Method (handle_enter_pressed)
-    # Description:
-    # This method handler after the user presses the Enter key in the distance input field.
-    # It validates the entered distance, calculates the scaling factor based on the selected distance between points,
-    # update the direction label with the distance entered, pixel distance, and scaling factor,
-    # Input: self
-    # Output: None'
 
     def handle_enter_pressed(self):
-        """Handle pressing Enter in the distance input field."""
+        """
+        Description: This method handler after the user presses the Enter key in the distance input field.
+                     It validates the entered distance, calculates the scaling factor based on the selected distance between points,
+                     update the direction label with the distance entered, pixel distance, and scaling factor,
+        Input: self
+        Output: None
+        """
         try:
             # Get and validate the entered distance
             distance = float(self.distance_input.text())
@@ -241,13 +241,12 @@ class CalibrationPage(QWidget):
             QMessageBox.warning(self, "Invalid Input", str(e))
 
 
-    # Method (next_page)
-    # Description:
-    # This method switches to the next page after a delay of 2 seconds.
-    # Input: self
-    # Output: None
     def next_page(self, scaling_factor):
-
+        """
+        Description: This method switches to the next page after a delay of 2 seconds.
+        Input: self
+        Output: None
+        """
         folder_path = self.folder_path
         image_path = self.image_path
         axis_orientation = self.axis_orientation
@@ -258,14 +257,13 @@ class CalibrationPage(QWidget):
         self.parent.stack.setCurrentWidget(self.parent.edit_page)
 
     
-    # Method (reselect_points)
-    # Description:
-    # This method allows the user to reselect the two points in the image to set the distance.
-    # It clears the clicked points list, resets the image viewer, and prompts the user to select new points.
-    # Input: self
-    # Output: None
-
     def reselect_points(self):
+        """
+        Description: This method allows the user to reselect the two points in the image to set the distance.
+                     It clears the clicked points list, resets the image viewer, and prompts the user to select new points.
+        Input: self
+        Output: None
+        """
         self.hide_graph_and_buttons()
         self.clicked_points = [] # Clear the clicked points
         self.reselect_points_button.setEnabled(False) # Disable the button
@@ -274,16 +272,14 @@ class CalibrationPage(QWidget):
         self.image_viewer.load_image(self.image_path) # Reload the image
         
 
-
-    # Method (handle_point_clicked)
-    # Description:
-    # This method handles the clicked points on the image viewer.
-    # It checks if the clicked point is too close to an already clicked point and displays a warning message.
-    # If two points are selected, it enables the next steps and prompts the user to select the vertical axis.
-    # Input: self, x, y (coordinates of the clicked point)
-    # Output: None
-
     def handle_point_clicked(self, x, y):
+        """
+        Description: This method handles the clicked points on the image viewer.
+                     It checks if the clicked point is too close to an already clicked point and displays a warning message.
+                     If two points are selected, it enables the next steps and prompts the user to select the vertical axis.
+        Input: self, x, y (coordinates of the clicked point)
+        Output: None
+        """
         # Check if the clicked point is too close to an already clicked point
         for point in self.clicked_points:
             # If the distance between the clicked point and an already clicked point is less than 10 pixels
@@ -308,15 +304,14 @@ class CalibrationPage(QWidget):
             self.distance_input.setVisible(True) # Show the distance input field
             self.distance_input.setEnabled(True) # Enable the distance input field  
             
-    # Method (select_folder)
-    # Description:
-    # This method opens a dialog to select a folder containing images.
-    # It updates the folder path label and enables the select image button.
-    # Input: self
-    # Output: None
 
     def select_folder(self):
-        """Open a dialog to select a folder."""
+        """
+        Description: This method opens a dialog to select a folder containing images.
+                     It updates the folder path label and enables the select image button.
+        Input: self
+        Output: None
+        """
         # Open a dialog to select a folder
         folder_path = QFileDialog.getExistingDirectory(self, "Select Folder")
         if folder_path:
@@ -325,33 +320,34 @@ class CalibrationPage(QWidget):
             self.select_image_button.setVisible(True)#  Show the select image button
             self.select_image() # Call the select_image method
 
-    # Method (select_image)
-    # Description:
-    # This method opens a dialog to select an image from the selected folder.
-    # It loads the selected image in the image viewer and prompts the user to select two points to set the distance.
-    # Input: self
-    # Output: None
+    
     def select_image(self):
-        
-            self.image_viewer.click_list = [] # Clear the clicked points
-            self.clicked_points = [] # Clear the clicked points
-            """Open a dialog to select an image from the selected folder."""
-            if not self.folder_path:
-                return
-            # Open a dialog to select an image from the selected folder
-            options = QFileDialog.Options()
-            options |= QFileDialog.ReadOnly
-            image_path, _ = QFileDialog.getOpenFileName(
-                self,
-                "Select Image",
-                self.folder_path,
-                "Images (*.png *.jpg *.jpeg *.bmp)",
-                options=options
-            )
-            # If an image is selected, load it in the image viewer
-            if image_path:
-                self.image_path = image_path # Store the selected image path
-                self.image_viewer.load_image(image_path) # Load the selected image in the image viewer
-                self.direction_label.setText("Please select two points to set the distance") # Prompt the user to select two points
-                self.select_folder_button.setText("Reselect Folder")# Change the text of the select folder button
+        """
+        Description: This method opens a dialog to select an image from the selected folder.
+                     It loads the selected image in the image viewer and prompts the user 
+                     to select two points to set the distance.
+        Input: self
+        Output: None
+        """
+        self.image_viewer.click_list = [] # Clear the clicked points
+        self.clicked_points = [] # Clear the clicked points
+        """Open a dialog to select an image from the selected folder."""
+        if not self.folder_path:
+            return
+        # Open a dialog to select an image from the selected folder
+        options = QFileDialog.Options()
+        options |= QFileDialog.ReadOnly
+        image_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Select Image",
+            self.folder_path,
+            "Images (*.png *.jpg *.jpeg *.bmp)",
+            options=options
+        )
+        # If an image is selected, load it in the image viewer
+        if image_path:
+            self.image_path = image_path # Store the selected image path
+            self.image_viewer.load_image(image_path) # Load the selected image in the image viewer
+            self.direction_label.setText("Please select two points to set the distance") # Prompt the user to select two points
+            self.select_folder_button.setText("Reselect Folder")# Change the text of the select folder button
 

@@ -16,14 +16,11 @@
 
 # Import necessary libraries
 
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton, QLabel,
-    QTableWidget, QTableWidgetItem, QHBoxLayout, QFileDialog, QDialog
-)
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QPushButton, QLabel, QTableWidget,
+                             QTableWidgetItem, QHBoxLayout, QFileDialog)
 from PyQt5.QtCore import Qt
 import pandas as pd
 import os
-import sys
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QMessageBox
 # Class: DataReviewPage
