@@ -101,12 +101,12 @@ class EditPage(QWidget):
         # Button to skip "X" image
         # Description: If image for trial dne, user uses this to add false value to data point
         self.skip_button = QPushButton("No Trial")
-        # self.skip_button.clicked.connect()
+        self.skip_button.clicked.connect(self.no_image)
 
         # Button to skip invalid image
         # Description: If puck is out of the grid's bounds, user clicks this to add outlier value to data
         self.outlier_button = QPushButton("Out of bounds")
-        # self.outlier_button.clicked.connect()
+        self.outlier_button.clicked.connect(self.invalid_trial)
 
         # Add buttons to horizontal layout
         buttons = [self.previous_button, self.center_button, self.skip_button, self.outlier_button]
@@ -518,8 +518,25 @@ class EditPage(QWidget):
         #  Add the new instances back to QStackedWidget
         parent_stack.addWidget(self.parent.calibration_page)
         parent_stack.addWidget(self.parent.edit_page)
-            
-        
-      
 
-        
+    def no_image(self):
+        """
+        Description: When trial with no existing picture exists, user presses this button
+                     to add 'zero' data to resuts
+        """
+        self.radial, self.xaxis, self.yaxis = 0, 0, 0
+        self.file_manager.append_axis_data(
+            self.result_file_path, self.image_index, self.radial, self.yaxis, self.xaxis
+        )
+        self.next_image("Previous trial image DNE. Next image loaded")
+
+    def invalid_trial(self):
+        """
+        Description: When trial exists when puck lies outside of valid grid area, user
+                     presses button to add outlier to results data
+        """
+        self.radial, self.xaxis, self.yaxis = 99999, 99999, 99999
+        self.file_manager.append_axis_data(
+            self.result_file_path, self.image_index, self.radial, self.yaxis, self.xaxis
+        )
+        self.next_image("Previous trial was out of bounds. Next image loaded")

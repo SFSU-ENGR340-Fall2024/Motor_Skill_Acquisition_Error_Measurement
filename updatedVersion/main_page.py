@@ -81,18 +81,17 @@ class MainMenu(QWidget):
 
         # Button to start image processing (navigate to calibration page)
         self.select_button = QPushButton("Start Image Processing")
-        self.select_button.setStyleSheet("font-size: 20px")
-        layout.addWidget(self.select_button)
 
         # Button to review data (navigate to data review page)
         self.review_button = QPushButton("Review Data")
-        self.review_button.setStyleSheet("font-size: 20px")
-        layout.addWidget(self.review_button)
 
         # Button to exit the application
         self.exit_button = QPushButton("Exit Program")
-        self.exit_button.setStyleSheet("font-size: 20px")
-        layout.addWidget(self.exit_button)
+
+        # Style all buttons and add to layout
+        buttons = [self.select_button, self.review_button, self.exit_button]
+        [button.setStyleSheet('font-size: 20px') for button in buttons]
+        [layout.addWidget(button) for button in buttons]
 
         # Set layout margins (right, left, left, bottom)
         layout.setContentsMargins(100, 100, 100, 100)  # Increase bottom margin

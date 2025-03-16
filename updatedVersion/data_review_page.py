@@ -65,40 +65,36 @@ class DataReviewPage(QWidget):
         # This button allows the user to load a folder
         self.load_folder_button = QPushButton("Load Folder")
         self.load_folder_button.clicked.connect(self.load_folder)
-        button_layout.addWidget(self.load_folder_button)
 
         # Button to export data
         # This button allows the user to export the data
         self.export_button = QPushButton("Export Data")
         self.export_button.clicked.connect(self.export_data)
-        button_layout.addWidget(self.export_button)
 
         # Button to display statistics
         # This button allows the user to display statistics
         self.stats_button = QPushButton("Show Statistics")
         self.stats_button.clicked.connect(self.show_statistics)
-        button_layout.addWidget(self.stats_button)
 
         # Button to display graphs
         # This button allows the user to display graphs
         self.graphs_button = QPushButton("Show Graphs")
         self.graphs_button.clicked.connect(self.show_graphs)
-        button_layout.addWidget(self.graphs_button)
 
         # Button to go back to main menu
         # This button allows the user to go back to the main menu
         self.back_button = QPushButton("Back to Menu")
         self.back_button.clicked.connect(self.go_to_main_menu)
-        button_layout.addWidget(self.back_button)
+
+        # Set button font size
+        buttons = [self.load_folder_button, self.export_button, self.stats_button, 
+                   self.graphs_button, self.back_button]
+        [button.setStyleSheet('font-size: 16px') for button in buttons]
+        [button_layout.addWidget(button) for button in buttons]
 
         # Add button layout to the main layout
         layout.addLayout(button_layout)
         self.setLayout(layout)
-
-        # Set button font size
-        buttons = [self.back_button, self.stats_button, self.export_button,
-                   self.graphs_button, self.load_folder_button]
-        [button.setStyleSheet('font-size: 16px') for button in buttons]
 
     # Method: load_folder
     # Description:
@@ -112,7 +108,7 @@ class DataReviewPage(QWidget):
         )
         if folder_path:
             # Construct the file path
-            results_file = os.path.join(folder_path, "Results_File.txt") # Results_File.txt path
+            results_file = os.path.join(folder_path, "Results", "Results_File.txt") # Results_File.txt path
             if os.path.exists(results_file):
                 self.file_path = results_file
                 self.read_and_display_data(results_file)
@@ -228,7 +224,8 @@ class DataReviewPage(QWidget):
     def show_graphs(self):
         if self.data is not None:
             # Plot Radial
-            plt.figure()
+            # plt.figure()
+            plt.subplot(2,2,3)
             plt.plot(self.data["Image Trial"], self.data["Radial"], marker="o", label="Radial")
             plt.xlabel("Image Trial")
             plt.ylabel("Radial")
@@ -237,7 +234,8 @@ class DataReviewPage(QWidget):
             plt.grid(True)
 
             # Plot Y-Axis
-            plt.figure()
+            # plt.figure()
+            plt.subplot(2,2,2)
             plt.plot(self.data["Image Trial"], self.data["Y-Axis"], marker="o", label="Y-Axis", color="green")
             plt.xlabel("Image Trial")
             plt.ylabel("Y-Axis")
@@ -246,7 +244,8 @@ class DataReviewPage(QWidget):
             plt.grid(True)
 
             # Plot X-Axis
-            plt.figure()
+            # plt.figure()
+            plt.subplot(2,2,1)
             plt.plot(self.data["Image Trial"], self.data["X-Axis"], marker="o", label="X-Axis", color="red")
             plt.xlabel("Image Trial")
             plt.ylabel("X-Axis")
