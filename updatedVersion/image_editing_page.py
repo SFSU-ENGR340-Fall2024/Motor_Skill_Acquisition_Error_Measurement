@@ -66,7 +66,6 @@ class EditPage(QWidget):
         self.radial = None # Store the calculated z-axis value
         self.yaxis = None # Store the calculated y-axis value
         self.xaxis = None # Store the calculated x-axis value
-
         self.layout = QVBoxLayout() # Create a vertical layout for the page
 
         # Direction label 
@@ -138,6 +137,7 @@ class EditPage(QWidget):
         self.image_viewer.point_clicked.connect(self.handle_point_clicked)
 
 
+
     def handle_point_clicked(self, x, y):
         """
         Description: Handle the event when a point is clicked on the image.
@@ -191,7 +191,7 @@ class EditPage(QWidget):
     def calulate_and_display(self):
         """
         Description: Adjust the coordinates based on the user selected axes and center point.
-                     Calculate the z-axis, y-axis, and x-axis values based on the selected points.
+                     Calculate the radial, y-axis, and x-axis values based on the selected points.
                      Append the calculated data to the results file.
                      Update the info label with the calculated data.
     
@@ -205,20 +205,23 @@ class EditPage(QWidget):
         relative_y = self.clicked_points[1][1] - origin_y
 
         # Determine vertical and horizontal values based on the selected axes
+        # Adjust the values based on the selected axis orientation
+        # Default orientation is 0 (x-axis: horizontal, y-axis: vertical)
+
         try:
-            if self.axis_orientation == 0:
+            if self.axis_orientation == 0: # Default orientation
                 vertical_value = relative_x
                 horizontal_value = -relative_y
 
-            elif self.axis_orientation == 1:
+            elif self.axis_orientation == 1: # Custom orientation
                 vertical_value = relative_y
                 horizontal_value = relative_x
 
-            elif self.axis_orientation == 2:
+            elif self.axis_orientation == 2: # Custom orientation
                 vertical_value = -relative_x
                 horizontal_value = relative_y
 
-            elif self.axis_orientation == 3:
+            elif self.axis_orientation == 3: # Custom orientation
                 vertical_value = -relative_y
                 horizontal_value = -relative_x
 
@@ -508,6 +511,8 @@ class EditPage(QWidget):
         """
         Description: When trial with no existing picture exists, user presses this button
                      to add 'zero' data to resuts
+
+        Input: None
         """
         self.radial, self.xaxis, self.yaxis = 0, 0, 0 # Placeholder data
         
@@ -522,6 +527,8 @@ class EditPage(QWidget):
         """
         Description: When trial exists when puck lies outside of valid grid area, user
                      presses button to add outlier to results data
+        Input: None
+        Input: None
         """
         self.radial, self.xaxis, self.yaxis = 99999, 99999, 99999 # Placheholder data
 

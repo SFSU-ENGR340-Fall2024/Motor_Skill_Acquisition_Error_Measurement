@@ -1,17 +1,19 @@
 ############################################################################################
-# Project Name: Motor Skill Acquisition Error Management System (San Francisco State University Project 2024) 
+# Project Name: Motor Skill Acquisition Error Management System 
 # 
 # Filename: main_page.py
 # 
-# Authors: Milton Tinoco, Ethan Weldon, Joshua Samson, Michael Cabrera
+# Current Authors: Milton Tinoco, Joshua Samson, Michael Cabrera
+# Last Update: 3/18/2025
 #
-# Last Update: 12/08/2024
+# Previous Authors: Milton Tinoco, Ethan Weldon, Joshua Samson, Michael Cabrera
+# Last Update: 12/08/24
 #
 # Project Description:
 # This project is an image editing tool designed to calculate real-life measurements
 # between points in images. Users select a folder of images, including a calibration image,
 # to determine a scaling factor. The tool applies this factor to calculate real-world 
-# distances between points in other images, displaying the results and saving them in a text file.
+# distances between points in images, displaying the results and saving them in a text file.
 #
 # File Description:
 # This file contains the code for the main window of the application and initializes 
@@ -34,22 +36,33 @@ from image_editing_page import EditPage
 # Initializes the main application window and sets up the navigation between the main menu,
 # calibration page, data review page, and image editing page.
 class MainWindow(QMainWindow):
+
+    # Constructor
+    # Initializes the main window and sets the window title and size.
+    # Input: None
+    # Output: None
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Motor Skill Acquisition Error Management System")  # Set application window title
         self.setGeometry(100, 100, 1600, 900)     # Set default window size
         self.initUI()                            # Initialize the UI components
-
+    
+    # Method: initUI
+    # Description:
+    # Initializes the main window with a stacked layout for navigation.
+    # Input: None
+    # Output: None
+    
     def initUI(self):
         """Initialize the main window with a stacked layout for navigation."""
-        self.stack = QStackedWidget()
+        self.stack = QStackedWidget() # Create a stacked widget for page navigation
         self.setCentralWidget(self.stack)  # Display the top widget on the stack
 
         # Add pages to the stack
-        self.main_menu = MainMenu(self)
-        self.calibration_page = CalibrationPage(self)
-        self.edit_page = EditPage(self)
-        self.data_review_page = DataReviewPage(self)
+        self.main_menu = MainMenu(self) # Main menu page
+        self.calibration_page = CalibrationPage(self) # Calibration page
+        self.edit_page = EditPage(self) # Image editing page
+        self.data_review_page = DataReviewPage(self)    # Data review page
 
         self.stack.addWidget(self.main_menu)          # Main menu page
         self.stack.addWidget(self.calibration_page)   # Calibration page

@@ -188,7 +188,10 @@ class CalibrationPage(QWidget):
 
     def next_image(self):
         """
-        Description: Go to the next image in the list.
+        Description: Go next image of graph based on the index.
+        Input: self
+        Output: None
+
         """
         print("Before",self.axis_orientation)
         self.axis_orientation = (self.axis_orientation + 1) % len(self.image_files)
@@ -199,6 +202,9 @@ class CalibrationPage(QWidget):
     def previous_image(self):
         """
         Description: Go to the previous image in the list.
+        Input: self
+        Output: None
+        
         """
         print("Before",self.axis_orientation)
         self.axis_orientation = (self.axis_orientation - 1) % len(self.image_files)

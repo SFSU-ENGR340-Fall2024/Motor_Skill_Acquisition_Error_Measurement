@@ -2,10 +2,8 @@
 # Project Name: Motor Skill Acquisition Error Management System (San Francisco State University Project 2024) 
 # 
 # Filename: Image_interface.py
-# 
-# Authors: Milton Tinoco, Ethan Weldon, Joshua Samson, Michael Cabrera
 #
-# Last Update: 12/08/2024
+# Last Update: 3/18/2025
 #
 # File Description:
 # This file contains the code for the image interface, which displays images and allows users to select points on them.
@@ -56,13 +54,6 @@ class ImageView(QGraphicsView):
             x - circle_radius, y - circle_radius, 2 * circle_radius, 2 * circle_radius, self.pen
         )
         ellipse_item.setBrush(Qt.green)  # Set the brush color to yellow
-
-    def remove_image(self):
-        """Remove the currently displayed image and reset image-related attributes."""
-        self.scene.clear()  # Clear the scene (removes image and annotations)
-        self.image_selected = False  # Reset the flag indicating image presence
-        self.click_list = []  # Clear stored click points
-        self.track_clicks = 0  # Reset tracking limit
 
     # Method: load_image
     # Description:
