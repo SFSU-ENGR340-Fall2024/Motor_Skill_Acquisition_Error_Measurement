@@ -514,7 +514,7 @@ class EditPage(QWidget):
 
         Input: None
         """
-        self.radial, self.xaxis, self.yaxis = 0, 0, 0 # Placeholder data
+        self.radial, self.xaxis, self.yaxis = "N/A", "N/A", "N/A" # Placeholder data
         
         # Add data to results file 
         self.file_manager.append_axis_data(

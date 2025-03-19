@@ -134,10 +134,14 @@ class DataReviewPage(QWidget):
                     if line.startswith("Image Trial:"):
                         try:
                             trial = line.split("Image Trial:")[1].split()[0]
-                            z_axis = line.split("Radial:")[1].split()[0]
+                            radial = line.split("Radial:")[1].split()[0]
                             y_axis = line.split("Y-Axis:")[1].split()[0]
                             x_axis = line.split("X-Axis:")[1].split()[0]
-                            data.append([int(trial), float(z_axis), float(y_axis), float(x_axis)])
+
+                            if all(type(data) == str for data in (radial, y_axis, x_axis)):
+                                data.append([int(trial), str(radial), str(y_axis), str(x_axis)])
+                            else:
+                                data.append([int(trial), float(radial), float(y_axis), float(x_axis)])
                         except (IndexError, ValueError):
                             
                             continue

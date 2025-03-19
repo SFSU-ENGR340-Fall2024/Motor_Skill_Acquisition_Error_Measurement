@@ -74,7 +74,12 @@ class FileManager:
 
         with open(file_path, "a") as file:
             # Append the data with labels
-            file.write(f"Image Trial: {image_index:<10} Radial: {radial:<10.2f} X-Axis: {xaxis:<10.2f} Y-Axis: {yaxis:<10.2f}\n")
+            # 'No Trial' button pressed, append 'N/A'
+            if all(type(data) == str for data in (radial, yaxis, xaxis)):
+                file.write(f"Image Trial: {image_index:<10} Radial: {radial} \t\t X-Axis: {xaxis}\t Y-Axis: {yaxis}\n")
+            # Valid test image click or 'Out of Bounds" button clicked, append data
+            else:
+                file.write(f"Image Trial: {image_index:<10} Radial: {radial:<10.2f} X-Axis: {xaxis:<10.2f} Y-Axis: {yaxis:<10.2f}\n")
     
     def remove_last_line(self, file_path):
         """
