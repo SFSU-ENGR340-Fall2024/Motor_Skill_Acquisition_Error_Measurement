@@ -270,6 +270,7 @@ class EditPage(QWidget):
         """
         self.track_clicks = 2
         self.image_viewer.track_clicks = self.track_clicks
+        self.info_label.setText(f" On Trial [{self.image_index}] out of [{len(self.image_list) - 1}] || Previous Trial Values: || Radial: {self.radial} | X-axis: {self.xaxis} | Y-axis: {self.yaxis}")
         self.load_image(self.image_index, "Please click on the center again to reselect")
        
     def load_image(self,index,text):
@@ -520,9 +521,16 @@ class EditPage(QWidget):
         self.file_manager.append_axis_data(
             self.result_file_path, self.image_index, self.radial, self.yaxis, self.xaxis
         )
-
-        self.next_image("Previous trial image DNE. Next image loaded") # Move on to next trial image
-
+       
+        if self.center_point == None:
+            self.image_index += 1
+            self.info_label.setText(f" On Trial [{self.image_index}] out of [{len(self.image_list) - 1}] || Previous Trial Values: || Radial: {self.radial} | X-axis: {self.xaxis} | Y-axis: {self.yaxis}")
+            self.track_clicks = 2
+            self.image_viewer.track_clicks = self.track_clicks
+            self.load_image(self.image_index, "Previous trial image DNE. Next image loaded")
+        else:
+            self.next_image("Previous trial image DNE. Next image loaded") # Move on to next trial image
+            
     def invalid_trial(self):
         """
         Description: When trial exists when puck lies outside of valid grid area, user
@@ -537,4 +545,11 @@ class EditPage(QWidget):
             self.result_file_path, self.image_index, self.radial, self.yaxis, self.xaxis
         )
 
-        self.next_image("Previous trial was out of bounds. Next image loaded") # Move on to next trial image
+        if self.center_point == None:
+            self.image_index += 1
+            self.info_label.setText(f" On Trial [{self.image_index}] out of [{len(self.image_list) - 1}] || Previous Trial Values: || Radial: {self.radial} | X-axis: {self.xaxis} | Y-axis: {self.yaxis}")
+            self.track_clicks = 2
+            self.image_viewer.track_clicks = self.track_clicks
+            self.load_image(self.image_index, "Previous trial was out of bounds. Next image loaded")
+        else:
+            self.next_image("Previous trial was out of bounds. Next image loaded") # Move on to next trial image
