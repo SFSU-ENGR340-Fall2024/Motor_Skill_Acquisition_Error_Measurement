@@ -23,6 +23,7 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QMessageBox
+import numpy as np
 # Class: DataReviewPage
 # Description:
 # This class represents the data review page of the application.
@@ -138,14 +139,14 @@ class DataReviewPage(QWidget):
                             y_axis = line.split("Y-Axis:")[1].split()[0]
                             x_axis = line.split("X-Axis:")[1].split()[0]
 
-                            if all(type(data) == str for data in (radial, y_axis, x_axis)):
+                            if all(data == "N/A" for data in (radial, y_axis, x_axis)):
                                 data.append([int(trial), str(radial), str(y_axis), str(x_axis)])
                             else:
                                 data.append([int(trial), float(radial), float(y_axis), float(x_axis)])
                         except (IndexError, ValueError):
                             
                             continue
-
+            
             # Save data for exporting
             self.data = pd.DataFrame(data, columns=["Image Trial", "Radial", "Y-Axis", "X-Axis"])
 
@@ -224,10 +225,25 @@ class DataReviewPage(QWidget):
 
     def show_graphs(self):
         if self.data is not None:
+            # Save column data into numpy arrays
+            image_trial = self.data["Image Trial"]
+            radial = np.array(self.data["Radial"])
+            x_axis = np.array(self.data["X-Axis"])
+            y_axis = np.array(self.data["Y-Axis"])
+
+            # Create mask where points are N/A
+            mask = ~np.all(np.column_stack((radial, y_axis, x_axis)) == "N/A", axis=1)
+
+            # Mask all N/A points
+            image_trial = image_trial[mask]
+            radial = radial[mask]
+            y_axis = y_axis[mask]
+            x_axis = x_axis[mask]
+
             # Plot Radial
-            # plt.figure()
-            plt.subplot(2,2,3)
-            plt.plot(self.data["Image Trial"], self.data["Radial"], marker="o", label="Radial")
+            plt.figure()
+            # plt.subplot(2,2,3)
+            plt.scatter(image_trial, radial, marker="o", label="Radial")
             plt.xlabel("Image Trial")
             plt.ylabel("Radial")
             plt.title("Radial vs. Image Trial")
@@ -235,9 +251,9 @@ class DataReviewPage(QWidget):
             plt.grid(True)
 
             # Plot Y-Axis
-            # plt.figure()
-            plt.subplot(2,2,2)
-            plt.plot(self.data["Image Trial"], self.data["Y-Axis"], marker="o", label="Y-Axis", color="green")
+            plt.figure()
+            # plt.subplot(2,2,2)
+            plt.scatter(image_trial, y_axis, marker="o", label="Y-Axis", color="green")
             plt.xlabel("Image Trial")
             plt.ylabel("Y-Axis")
             plt.title("Y-Axis vs. Image Trial")
@@ -245,9 +261,9 @@ class DataReviewPage(QWidget):
             plt.grid(True)
 
             # Plot X-Axis
-            # plt.figure()
-            plt.subplot(2,2,1)
-            plt.plot(self.data["Image Trial"], self.data["X-Axis"], marker="o", label="X-Axis", color="red")
+            plt.figure()
+            # plt.subplot(2,2,1)
+            plt.scatter(image_trial, x_axis, marker="o", label="X-Axis", color="red")
             plt.xlabel("Image Trial")
             plt.ylabel("X-Axis")
             plt.title("X-Axis vs. Image Trial")
