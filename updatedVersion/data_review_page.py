@@ -21,9 +21,13 @@ from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QPushButton, QLabel, QTableWi
 from PyQt5.QtCore import Qt
 import pandas as pd
 import os
-import matplotlib.pyplot as plt
 from PyQt5.QtWidgets import QMessageBox
 import numpy as np
+
+import matplotlib
+matplotlib.use(("Qt5Agg"))
+import matplotlib.pyplot as plt
+
 # Class: DataReviewPage
 # Description:
 # This class represents the data review page of the application.
